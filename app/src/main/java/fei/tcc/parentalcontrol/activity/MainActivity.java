@@ -1,7 +1,9 @@
-package fei.tcc.parentalcontrol;
+package fei.tcc.parentalcontrol.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import fei.tcc.parentalcontrol.R;
 
 public class MainActivity extends AppCompatActivity {
 
