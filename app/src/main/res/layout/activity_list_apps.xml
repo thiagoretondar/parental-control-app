@@ -9,6 +9,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activity.ListAppsActivity">
 
+
+    <Button android:id="@+id/button_open_usage_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/open_app_usage_setting"
+        android:visibility="gone"
+        />
+
     <ListView
         android:id="@+id/list_apps"
         android:layout_width="match_parent"
