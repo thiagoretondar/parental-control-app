@@ -1,5 +1,6 @@
 package fei.tcc.parentalcontrol.vo;
 
+import android.app.usage.UsageStats;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -8,6 +9,7 @@ import android.graphics.drawable.Drawable;
 public class AppVo {
 
     private String name;
+    private UsageStats usageStats;
     private Drawable icon;
 
     public String getName() {
@@ -24,6 +26,14 @@ public class AppVo {
 
     public void setIcon(Drawable icon) {
         this.icon = icon;
+    }
+
+    public UsageStats getUsageStats() {
+        return usageStats;
+    }
+
+    public void setUsageStats(UsageStats usageStats) {
+        this.usageStats = usageStats;
     }
 
     @Override
