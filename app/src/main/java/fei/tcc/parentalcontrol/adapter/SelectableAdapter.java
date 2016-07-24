@@ -1,11 +1,13 @@
 package fei.tcc.parentalcontrol.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -31,8 +33,12 @@ public class SelectableAdapter extends ArrayAdapter<AppVo> {
         this.list = objects;
     }
 
+    /**
+     * Represents de AppVo!
+     */
     private static class ViewHolder {
         TextView itemName;
+        ImageView itemIcon;
     }
 
     public View getView(int position, View view, ViewGroup parent) {
@@ -41,6 +47,7 @@ public class SelectableAdapter extends ArrayAdapter<AppVo> {
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.app_list_row, null);
             holder.itemName = (TextView) view.findViewById(R.id.app_name);
+            holder.itemIcon = (ImageView) view.findViewById(R.id.app_icon);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -48,6 +55,7 @@ public class SelectableAdapter extends ArrayAdapter<AppVo> {
 
         // TODO change here what should be displayed?
         holder.itemName.setText(list.get(position).getName());
+
         return view;
     }
 

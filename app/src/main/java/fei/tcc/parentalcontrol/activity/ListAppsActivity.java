@@ -42,17 +42,28 @@ public class ListAppsActivity extends AppCompatActivity {
         appListView.setChoiceMode(CHOICE_MODE_MULTIPLE_MODAL);
 
         appListView.setMultiChoiceModeListener(actionOnItemClicked());
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         // Obtain the installed apps in system
         List<AppVo> apps = getInstalledApps();
 
-        sAdapter = new SelectableAdapter(this, R.layout.activity_list_apps, apps);
+        sAdapter = new SelectableAdapter(this, android.R.layout.simple_list_item_multiple_choice, apps);
+
         appListView.setAdapter(sAdapter);
+
+        selectAllItemsByDefault(apps);
+
+    }
+
+    /**
+     * Select all apps passed
+     *
+     * @param apps apps to be selected
+     */
+    private void selectAllItemsByDefault(List<AppVo> apps) {
+        for (int i = 0; i < apps.size(); i++) {
+            appListView.setItemChecked(i, true);
+        }
     }
 
     /**
