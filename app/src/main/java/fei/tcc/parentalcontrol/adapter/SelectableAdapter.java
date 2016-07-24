@@ -1,7 +1,7 @@
 package fei.tcc.parentalcontrol.adapter;
 
+import android.app.usage.UsageStats;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +38,7 @@ public class SelectableAdapter extends ArrayAdapter<AppVo> {
      */
     private static class ViewHolder {
         TextView itemName;
+        TextView itemTime;
         ImageView itemIcon;
     }
 
@@ -48,13 +49,17 @@ public class SelectableAdapter extends ArrayAdapter<AppVo> {
             view = inflater.inflate(R.layout.app_list_row, null);
             holder.itemName = (TextView) view.findViewById(R.id.app_name);
             holder.itemIcon = (ImageView) view.findViewById(R.id.app_icon);
+            holder.itemTime = (TextView) view.findViewById(R.id.app_time);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
 
-        // TODO change here what should be displayed?
+        long hours = (list.get(position).getUsageStats().getTotalTimeInForeground() / (1000*60*60)) % 24;
+
         holder.itemName.setText(list.get(position).getName());
+        holder.itemIcon.setImageDrawable(list.get(position).getIcon());
+        holder.itemTime.setText("Time: " + String.valueOf(hours) + "h");
 
         return view;
     }
