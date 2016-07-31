@@ -15,19 +15,29 @@
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:textStyle="bold"
-        android:text="Nome App"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/app_icon" />
+        android:layout_toEndOf="@+id/app_icon"
+        android:padding="5dp"
+        android:text="Nome App"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/app_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="Horas"
         android:layout_alignBottom="@+id/app_icon"
-        android:layout_toEndOf="@+id/app_icon" />
+        android:layout_toEndOf="@+id/app_icon"
+        android:padding="5dp"
+        android:text="Horas" />
+
+    <CheckBox
+        android:id="@+id/app_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_alignBottom="@+id/app_time"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>
