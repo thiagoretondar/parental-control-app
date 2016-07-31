@@ -11,12 +11,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -56,9 +51,6 @@ public class ListAppsActivity extends AppCompatActivity {
 
         appListView.setChoiceMode(CHOICE_MODE_MULTIPLE_MODAL);
 
-        appListView.setMultiChoiceModeListener(actionOnItemClicked());
-
-
         // Obtain the installed apps in system
         List<AppVo> apps = getInstalledApps();
 
@@ -66,7 +58,7 @@ public class ListAppsActivity extends AppCompatActivity {
 
         appListView.setAdapter(sAdapter);
 
-        selectAllItemsByDefault(apps);
+        //selectAllItemsByDefault(apps);
 
     }
 
@@ -82,67 +74,13 @@ public class ListAppsActivity extends AppCompatActivity {
     }
 
     /**
-     * Implements methods to select multiple items of ListView
-     *
-     * @return action when click in one item of list
-     */
-    @NonNull
-    private MultiChoiceModeListener actionOnItemClicked() {
-        return new MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
-                // Prints the count of selected Items in title
-                actionMode.setTitle(appListView.getCheckedItemCount() + " Selected");
-
-                // Toggle the state of item after every click on it
-                sAdapter.toggleSelection(position);
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                actionMode.getMenuInflater().inflate(R.menu.app_menu_action, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.delete) {
-                    SparseBooleanArray selected = sAdapter.getSelectedIds();
-                    short size = (short) selected.size();
-                    for (byte i = 0; i < size; i++) {
-                        if (selected.valueAt(i)) {
-                            AppVo selectedItem = sAdapter.getItem(selected.keyAt(i));
-                            sAdapter.remove(selectedItem);
-                        }
-                    }
-
-                    // Close CAB (Contextual Action Bar)
-                    actionMode.finish();
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-
-            }
-        };
-    }
-
-    /**
      * Use PackageManager to get the list of installed apps
      *
      * @return list of apps installed
      */
     @NonNull
     private List<AppVo> getInstalledApps() {
-        
+
         // get app list of used apps
 //        List<ApplicationInfo> installedApplications = pm.getInstalledApplications(GET_META_DATA);
 //        for (ApplicationInfo ai : installedApplications) {
