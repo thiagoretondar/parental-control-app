@@ -135,13 +135,6 @@ public class ListAppsActivity extends AppCompatActivity {
                 .queryUsageStats(intervalType, cal.getTimeInMillis(),
                         System.currentTimeMillis());
 
-        List<UsageStats> newUsage = new ArrayList<>(1);
-        for (UsageStats u : queryUsageStats) {
-            if (u.getPackageName().equals("com.android.mms")) {
-                newUsage.add(u);
-            }
-        }
-
         if (queryUsageStats.size() == 0) {
             Log.i(TAG, "The user may not allow the acscess to apps usage. ");
             Toast.makeText(this,
