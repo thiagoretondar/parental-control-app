@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import fei.tcc.parentalcontrol.component.ProcessManager;
 
 public class AppUsageInfoService extends IntentService {
 
@@ -62,26 +65,37 @@ public class AppUsageInfoService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public String getForegroundApp() {
-        String topPackageName = "";
-        UsageStatsManager mUsageStatsManager = (UsageStatsManager)getSystemService("usagestats");
-        long time = System.currentTimeMillis();
-        List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, time - 60000, time+1000);
-        // We get usage stats for the last 10 seconds
-        Log.i(TAG, "INICIO: " + DateUtils.formatSameDayTime(time - 60000, System.currentTimeMillis(), DateFormat.MEDIUM, DateFormat.MEDIUM));
-        Log.i(TAG, "INICIO: " + DateUtils.formatSameDayTime(time + 1000, System.currentTimeMillis(), DateFormat.MEDIUM, DateFormat.MEDIUM));
-        // Sort the stats by the last time used
-        if(stats != null) {
-            SortedMap<Long,UsageStats> mySortedMap = new TreeMap<>();
-            for (UsageStats usageStats : stats) {
-                mySortedMap.put(usageStats.getLastTimeUsed(),usageStats);
-            }
-            if(mySortedMap != null && !mySortedMap.isEmpty()) {
-                topPackageName =  mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-            }
-            Log.i(TAG, "NOME DO PACOTE: " + topPackageName);
+    public void getForegroundApp() {
+//        String topPackageName = "";
+//        UsageStatsManager mUsageStatsManager = (UsageStatsManager)getSystemService(USAGE_STATS_SERVICE);
+//        long time = System.currentTimeMillis();
+//        List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, time - 60000*60*24, time+1000);
+//        // We get usage stats for the last 10 seconds
+//        Log.i(TAG, "INICIO: " + DateUtils.formatSameDayTime(time - 60000, System.currentTimeMillis(), DateFormat.MEDIUM, DateFormat.MEDIUM));
+//        Log.i(TAG, "INICIO: " + DateUtils.formatSameDayTime(time + 1000, System.currentTimeMillis(), DateFormat.MEDIUM, DateFormat.MEDIUM));
+//        // Sort the stats by the last time used
+//        if(stats != null) {
+//            SortedMap<Long,UsageStats> mySortedMap = new TreeMap<>();
+//            for (UsageStats usageStats : stats) {
+//                mySortedMap.put(usageStats.getLastTimeUsed(),usageStats);
+//            }
+//            if(mySortedMap != null && !mySortedMap.isEmpty()) {
+//                topPackageName =  mySortedMap.get(mySortedMap.lastKey()).getPackageName();
+//            }
+//            Log.i(TAG, "NOME DO PACOTE: " + topPackageName);
+//        }
+//        return topPackageName;
+        long startTime = System.currentTimeMillis();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Execution time: ").append(System.currentTimeMillis() - startTime).append("ms\n");
+        sb.append("Running apps:\n");
+        List<ProcessManager.Process> processes = ProcessManager.getRunningApps();
+        for (ProcessManager.Process process : processes) {
+            sb.append('\n').append(process.name);
         }
-        return topPackageName;
+        //new AlertDialog.Builder(MainActivity.this).setMessage(sb.toString()).show();
+        //Log.i(TAG, sb.toString());
+        Log.i(TAG, "FOREGROUND APP:" + ProcessManager.getForegroundApp());
     }
 
     public UsageStats getUsageStatistics(int intervalType, final String packageName) {
