@@ -1,4 +1,4 @@
-package fei.tcc.parentalcontrol;
+package fei.tcc.parentalcontrol.service;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -31,15 +31,15 @@ public class AppUsageInfoService extends IntentService {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //AppUsageInfoService.this.getUsageStatistics(UsageStatsManager.INTERVAL_DAILY, "com.android.mms");
                 AppUsageInfoService.this.getForegroundApp();
                 handler.postDelayed(this, 1000);
             }
         }, 2000);
+
         return super.onStartCommand(intent, flags, startId);
     }
 
     public void getForegroundApp() {
-        Log.i(TAG, "FOREGROUND APP:" + ProcessManager.getForegroundApp());
+        Log.i(TAG, "FOREGROUND APP: " + ProcessManager.getForegroundApp());
     }
 }

@@ -1,19 +1,9 @@
 package fei.tcc.parentalcontrol.component;
 
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by thiagoretondar on 8/3/16.
@@ -21,17 +11,6 @@ import java.util.List;
 public class ProcessManager {
 
     private static final String TAG = "ProcessManager";
-
-    private static final String APP_ID_PATTERN;
-
-    static {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            // Android 4.2 (JB-MR1) changed the UID name of apps for multiple user account support.
-            APP_ID_PATTERN = "u\\d+_a\\d+";
-        } else {
-            APP_ID_PATTERN = "app_\\d+";
-        }
-    }
 
     /** first app user */
     public static final int AID_APP = 10000;

@@ -81,19 +81,6 @@ public class ListAppsActivity extends AppCompatActivity {
     @NonNull
     private List<AppVo> getInstalledApps() {
 
-        // get app list of used apps
-//        List<ApplicationInfo> installedApplications = pm.getInstalledApplications(GET_META_DATA);
-//        for (ApplicationInfo ai : installedApplications) {
-//            String appName = pm.getApplicationLabel(ai).toString();
-//            Drawable appIcon = pm.getApplicationIcon(ai);
-//
-//            AppVo appVo = new AppVo();
-//            appVo.setName(appName);
-//            appVo.setIcon(appIcon);
-//
-//            apps.add(appVo);
-//        }
-
         // PackageManager to get info about apps
         PackageManager pm = this.getPackageManager();
 

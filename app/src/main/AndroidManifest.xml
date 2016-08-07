@@ -30,7 +30,7 @@
         <activity android:name=".activity.MainActivity" />
 
         <service
-            android:name=".AppUsageInfoService"
+            android:name=".service.AppUsageInfoService"
             android:enabled="true"
             android:exported="true"></service>
     </application>
