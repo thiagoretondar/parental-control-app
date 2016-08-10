@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import fei.tcc.parentalcontrol.component.ProcessManager;
+import fei.tcc.parentalcontrol.dao.PackageDao;
 
 public class AppUsageInfoService extends IntentService {
 
@@ -40,6 +41,12 @@ public class AppUsageInfoService extends IntentService {
     }
 
     public void getForegroundApp() {
-        Log.i(TAG, "FOREGROUND APP: " + ProcessManager.getForegroundApp());
+        PackageDao packageDao = new PackageDao(this);
+
+        packageDao.insert(ProcessManager.getForegroundApp());
+
+        packageDao.close();
+
+//        Log.i(TAG, "FOREGROUND APP: " + ProcessManager.getForegroundApp());
     }
 }

@@ -1,37 +1,31 @@
 package fei.tcc.parentalcontrol.activity;
 
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.List;
 
-import fei.tcc.parentalcontrol.service.AppUsageInfoService;
 import fei.tcc.parentalcontrol.R;
+import fei.tcc.parentalcontrol.dao.PackageDao;
+import fei.tcc.parentalcontrol.service.AppUsageInfoService;
 
 public class AppUsageActivity extends AppCompatActivity {
 
     private static final String TAG = ListAppsActivity.class.getSimpleName();
 
-    private UsageStatsManager mUsageStatsManager;
-
-    private Button mOpenUsageSettingButton;
+    private ListView packageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = new Intent(this, AppUsageInfoService.class);
+
+        setContentView(R.layout.activity_app_usage);
+        packageView = (ListView) findViewById(R.id.list_package);
+
         startService(intent);
     }
 
@@ -39,10 +33,15 @@ public class AppUsageActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        mUsageStatsManager = (UsageStatsManager) this.getSystemService(Context.USAGE_STATS_SERVICE);
+        loadPackageList();
 
-        mOpenUsageSettingButton = (Button) findViewById(R.id.button_open_usage_setting);
+    }
 
-        setContentView(R.layout.activity_app_usage);
+    private void loadPackageList() {
+        PackageDao packageDao = new PackageDao(this);
+        List<String> allPackages = packageDao.findAllPackages();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, allPackages);
+        packageView.setAdapter(adapter);
     }
 }
