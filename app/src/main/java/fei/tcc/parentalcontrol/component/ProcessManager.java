@@ -61,7 +61,7 @@ public class ProcessManager {
 
                 String cmdline = read(String.format("/proc/%d/cmdline", pid));
 
-                if (cmdline.contains("com.android.systemui")) {
+                if (cmdline.contains("com.android.systemui") || cmdline.contains("com.mediatek") || cmdline.contains("com.android") || cmdline.contains("com.google.android.googlequicksearchbox:interactor")) {
                     continue;
                 }
 
