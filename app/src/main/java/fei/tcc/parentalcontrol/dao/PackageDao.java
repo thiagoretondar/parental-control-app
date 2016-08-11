@@ -47,7 +47,7 @@ public class PackageDao extends SQLiteOpenHelper {
 
     public List<String> findAllPackages() {
         SQLiteDatabase db = getReadableDatabase();
-        String sql = "select * FROM package";
+        String sql = "select * FROM package order by id desc";
 
         List<String> packages = new ArrayList<>();
 
