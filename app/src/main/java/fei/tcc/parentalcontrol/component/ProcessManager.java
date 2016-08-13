@@ -1,5 +1,7 @@
 package fei.tcc.parentalcontrol.component;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,10 +14,14 @@ public class ProcessManager {
 
     private static final String TAG = "ProcessManager";
 
-    /** first app user */
+    /**
+     * first app user
+     */
     public static final int AID_APP = 10000;
 
-    /** offset for uid ranges for each user */
+    /**
+     * offset for uid ranges for each user
+     */
     public static final int AID_USER = 100000;
 
     public static String getForegroundApp() {
@@ -60,8 +66,10 @@ public class ProcessManager {
                 }
 
                 String cmdline = read(String.format("/proc/%d/cmdline", pid));
+                Log.i(TAG, "CMDLINE : " + cmdline.trim());
 
-                if (cmdline.contains("com.android.systemui") || cmdline.contains("com.mediatek") || cmdline.contains("com.android") || cmdline.contains("com.google.android.googlequicksearchbox:interactor")) {
+//                if (cmdline.contains("com.android.systemui") || scmdline.contains("com.mediatek") || cmdline.contains("com.android") || cmdline.contains("com.google.android.googlequicksearchbox:interactor")) {
+                if (cmdline.contains("com.android.systemui")) {
                     continue;
                 }
 
@@ -107,7 +115,7 @@ public class ProcessManager {
             }
         }
 
-        return foregroundProcess;
+        return foregroundProcess.trim();
     }
 
     private static String read(String path) throws IOException {
