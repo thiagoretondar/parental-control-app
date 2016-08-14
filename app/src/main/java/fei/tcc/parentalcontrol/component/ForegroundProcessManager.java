@@ -7,21 +7,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import static java.lang.String.format;
+
 /**
  * Created by thiagoretondar on 8/3/16.
  */
-public class ProcessManager {
+public class ForegroundProcessManager {
 
-    private static final String TAG = "ProcessManager";
+    private static final String TAG = "ForegroundProcess";
 
-    /**
-     * first app user
-     */
+    // fist app user
     public static final int AID_APP = 10000;
 
-    /**
-     * offset for uid ranges for each user
-     */
+    // offset for uid ranges for each user
     public static final int AID_USER = 100000;
 
     public static String getForegroundApp() {
@@ -44,7 +42,7 @@ public class ProcessManager {
             }
 
             try {
-                String cgroup = read(String.format("/proc/%d/cgroup", pid));
+                String cgroup = read(format("/proc/%d/cgroup", pid));
 
                 String[] lines = cgroup.split("\n");
 
@@ -65,16 +63,15 @@ public class ProcessManager {
                     continue;
                 }
 
-                String cmdline = read(String.format("/proc/%d/cmdline", pid));
-                Log.i(TAG, "CMDLINE : " + cmdline.trim());
+                String cmdline = read(format("/proc/%d/cmdline", pid)).trim();
+                Log.d(TAG, "Process found: " + cmdline);
 
-//                if (cmdline.contains("com.android.systemui") || scmdline.contains("com.mediatek") || cmdline.contains("com.android") || cmdline.contains("com.google.android.googlequicksearchbox:interactor")) {
-                if (cmdline.contains("com.android.systemui")) {
+                if (cmdline.contains("com.android.systemui") || cmdline.contains("com.mediatek.nlpservice") || cmdline.contains("com.google.android.googlequicksearchbox:interactor")) {
+                    Log.d(TAG, "Removing " + cmdline + " from the process list");
                     continue;
                 }
 
-                int uid = Integer.parseInt(
-                        cpuaccctSubsystem.split(":")[2].split("/")[1].replace("uid_", ""));
+                int uid = Integer.parseInt(cpuaccctSubsystem.split(":")[2].split("/")[1].replace("uid_", ""));
                 if (uid >= 1000 && uid <= 1038) {
                     // system process
                     continue;
@@ -96,7 +93,9 @@ public class ProcessManager {
                 // u{user_id}_a{app_id} is used on API 17+ for multiple user account support.
                 // String uidName = String.format("u%d_a%d", userId, appId);
 
-                File oomScoreAdj = new File(String.format("/proc/%d/oom_score_adj", pid));
+                //File oomScoreAdj = new File(String.format("/proc/%d/oom_score_adj", pid));
+                // for newest versions
+                File oomScoreAdj = new File(format("u%d_a%d", userId, appId));
                 if (oomScoreAdj.canRead()) {
                     int oomAdj = Integer.parseInt(read(oomScoreAdj.getAbsolutePath()));
                     if (oomAdj != 0) {
@@ -104,18 +103,20 @@ public class ProcessManager {
                     }
                 }
 
-                int oomscore = Integer.parseInt(read(String.format("/proc/%d/oom_score", pid)));
+                int oomscore = Integer.parseInt(read(format("/proc/%d/oom_score", pid)));
                 if (oomscore < lowestOomScore) {
                     lowestOomScore = oomscore;
                     foregroundProcess = cmdline;
                 }
 
             } catch (IOException e) {
+                Log.e(TAG, "ERROR WHEN GETTING FOREGROUND PROCCESS", e);
                 e.printStackTrace();
             }
         }
 
-        return foregroundProcess.trim();
+        Log.d(TAG, "Foreground proccess found: " + foregroundProcess);
+        return foregroundProcess;
     }
 
     private static String read(String path) throws IOException {

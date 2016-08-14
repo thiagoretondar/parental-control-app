@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
-import static fei.tcc.parentalcontrol.component.ProcessManager.getForegroundApp;
+import static fei.tcc.parentalcontrol.component.ForegroundProcessManager.getForegroundApp;
 
 public class AppUsageInfoService extends IntentService {
 
