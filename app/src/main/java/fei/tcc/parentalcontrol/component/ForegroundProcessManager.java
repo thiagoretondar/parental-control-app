@@ -66,7 +66,11 @@ public class ForegroundProcessManager {
                 String cmdline = read(format("/proc/%d/cmdline", pid)).trim();
                 Log.d(TAG, "Process found: " + cmdline);
 
-                if (cmdline.contains("com.android.systemui") || cmdline.contains("com.mediatek.nlpservice") || cmdline.contains("com.google.android.googlequicksearchbox:interactor")) {
+                if (cmdline.contains("com.android.systemui") ||
+                        cmdline.contains("com.mediatek.nlpservice") ||
+                        cmdline.contains("com.google.android.googlequicksearchbox:interactor") ||
+                        cmdline.contains("android.process.acore") ||
+                        cmdline.contains("android.process.media")) {
                     Log.d(TAG, "Removing " + cmdline + " from the process list");
                     continue;
                 }
@@ -116,6 +120,9 @@ public class ForegroundProcessManager {
         }
 
         Log.d(TAG, "Foreground proccess found: " + foregroundProcess);
+        if (foregroundProcess.contains(":")) {
+            foregroundProcess = foregroundProcess.split(":")[0];
+        }
         return foregroundProcess;
     }
 
