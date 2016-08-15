@@ -46,12 +46,13 @@ public class ForegroundProcessManager {
 
                 String[] lines = cgroup.split("\n");
 
-                if (lines.length != 2) {
+                // Some devices have lines.length = 3, others are equals 2
+                /*if (lines.length != 3) {
                     continue;
-                }
+                }*/
 
                 String cpuSubsystem = lines[0];
-                String cpuaccctSubsystem = lines[1];
+                String cpuaccctSubsystem = lines[lines.length - 1];
 
                 if (!cpuaccctSubsystem.endsWith(Integer.toString(pid))) {
                     // not an application process
@@ -70,7 +71,9 @@ public class ForegroundProcessManager {
                         cmdline.contains("com.mediatek.nlpservice") ||
                         cmdline.contains("com.google.android.googlequicksearchbox:interactor") ||
                         cmdline.contains("android.process.acore") ||
-                        cmdline.contains("android.process.media")) {
+                        cmdline.contains("android.process.media") ||
+                        cmdline.contains("com.android.vending") ||
+                        cmdline.contains("com.google.android.gms")) {
                     Log.d(TAG, "Removing " + cmdline + " from the process list");
                     continue;
                 }
@@ -97,9 +100,7 @@ public class ForegroundProcessManager {
                 // u{user_id}_a{app_id} is used on API 17+ for multiple user account support.
                 // String uidName = String.format("u%d_a%d", userId, appId);
 
-                //File oomScoreAdj = new File(String.format("/proc/%d/oom_score_adj", pid));
-                // for newest versions
-                File oomScoreAdj = new File(format("u%d_a%d", userId, appId));
+                File oomScoreAdj = new File(format("/proc/%d/oom_score_adj", pid));
                 if (oomScoreAdj.canRead()) {
                     int oomAdj = Integer.parseInt(read(oomScoreAdj.getAbsolutePath()));
                     if (oomAdj != 0) {
@@ -120,7 +121,7 @@ public class ForegroundProcessManager {
         }
 
         Log.d(TAG, "Foreground proccess found: " + foregroundProcess);
-        if (foregroundProcess.contains(":")) {
+        if (foregroundProcess != null && foregroundProcess.contains(":")) {
             foregroundProcess = foregroundProcess.split(":")[0];
         }
         return foregroundProcess;
