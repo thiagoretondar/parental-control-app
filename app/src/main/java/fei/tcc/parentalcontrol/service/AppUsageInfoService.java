@@ -2,7 +2,6 @@ package fei.tcc.parentalcontrol.service;
 
 import android.app.IntentService;
 import android.app.KeyguardManager;
-import android.app.usage.UsageStatsManager;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
