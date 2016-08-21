@@ -73,7 +73,8 @@ public class ForegroundProcessManager {
                         cmdline.contains("android.process.acore") ||
                         cmdline.contains("android.process.media") ||
                         cmdline.contains("com.android.vending") ||
-                        cmdline.contains("com.google.android.gms")) {
+                        cmdline.contains("com.google.android.gms") ||
+                        cmdline.contains("com.android.defcontainer")) {
                     Log.d(TAG, "Removing " + cmdline + " from the process list");
                     continue;
                 }
