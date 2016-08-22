@@ -60,10 +60,11 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(3000);
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
     }
 
     @Override
@@ -75,10 +76,12 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
     @Override
     public void onLocationChanged(Location location) {
         //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        String text = String.valueOf(location.getLatitude());
-        String text1 = String.valueOf(location.getLongitude());
-        mLatitudeTextView.setText(text);
-        mLongitudeTextView.setText(text1);
+        String latitude = String.valueOf(location.getLatitude());
+        String longitude = String.valueOf(location.getLongitude());
+        Log.d(TAG, "Latitude: " + latitude);
+        Log.d(TAG, "Longitude: " + longitude);
+        mLatitudeTextView.setText(latitude);
+        mLongitudeTextView.setText(longitude);
         Toast.makeText(this, "Updated: ", Toast.LENGTH_SHORT).show();
     }
 
