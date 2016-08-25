@@ -1,5 +1,6 @@
 package fei.tcc.parentalcontrol.activity;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import fei.tcc.parentalcontrol.R;
+import fei.tcc.parentalcontrol.service.LocationInfoService;
 
 public class LocationActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
@@ -32,6 +34,8 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_actity);
+        Intent intent = new Intent(this, LocationInfoService.class);
+        startService(intent);
 
         mLatitudeTextView = (TextView) findViewById((R.id.latitude_textview));
         mLongitudeTextView = (TextView) findViewById((R.id.longitude_textview));
