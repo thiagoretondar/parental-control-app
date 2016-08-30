@@ -3,8 +3,6 @@ package fei.tcc.parentalcontrol.activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -14,19 +12,16 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import fei.tcc.parentalcontrol.R;
 import fei.tcc.parentalcontrol.service.LocationInfoService;
 
-public class LocationActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+public class LocationActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener {
 
     private static final String TAG = "LocationActivity";
     private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
-    //private String mLastUpdateTime;
+    private Location mLocation;
     private TextView mLatitudeTextView;
     private TextView mLongitudeTextView;
 
@@ -34,6 +29,7 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_actity);
+
         Intent intent = new Intent(this, LocationInfoService.class);
         startService(intent);
 
@@ -45,12 +41,30 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        mGoogleApiClient.connect();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    public void onConnected(Bundle bundle) {
+        mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLocation != null) {
+            mLatitudeTextView.setText(String.valueOf(mLocation.getLatitude()));
+            mLongitudeTextView.setText(String.valueOf(mLocation.getLongitude()));
+        } else {
+            Toast.makeText(this, "Location not Detected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Connection Suspended");
         mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
     }
 
     @Override
@@ -61,36 +75,5 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
         }
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(5000);
-        mLocationRequest.setFastestInterval(3000);
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Connection Suspended");
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        //mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        String latitude = String.valueOf(location.getLatitude());
-        String longitude = String.valueOf(location.getLongitude());
-        Log.d(TAG, "Latitude: " + latitude);
-        Log.d(TAG, "Longitude: " + longitude);
-        mLatitudeTextView.setText(latitude);
-        mLongitudeTextView.setText(longitude);
-        Toast.makeText(this, "Updated: ", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
-    }
 }
