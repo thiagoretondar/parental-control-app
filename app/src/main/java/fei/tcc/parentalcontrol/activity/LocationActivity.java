@@ -3,6 +3,7 @@ package fei.tcc.parentalcontrol.activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -12,16 +13,23 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import fei.tcc.parentalcontrol.R;
 import fei.tcc.parentalcontrol.service.LocationInfoService;
 
-public class LocationActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener {
+public class LocationActivity extends AppCompatActivity implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
+
+    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
+    private long FASTEST_INTERVAL = 2000; /* 2 sec */
 
     private static final String TAG = "LocationActivity";
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
+    private LocationRequest mLocationRequest;
     private TextView mLatitudeTextView;
     private TextView mLongitudeTextView;
 
@@ -36,13 +44,12 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
         mLatitudeTextView = (TextView) findViewById((R.id.latitude_textview));
         mLongitudeTextView = (TextView) findViewById((R.id.longitude_textview));
 
+        // Create the location client to start receiving updates
         mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
                 .build();
-
-        mGoogleApiClient.connect();
     }
 
     @Override
@@ -54,6 +61,16 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
         } else {
             Toast.makeText(this, "Location not Detected", Toast.LENGTH_SHORT).show();
         }
+
+        startLocationUpdates();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Connect the client.
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -75,5 +92,27 @@ public class LocationActivity extends AppCompatActivity implements ConnectionCal
         }
     }
 
+    // Trigger new location updates at interval
+    protected void startLocationUpdates() {
+        // Create the location request
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL);
 
+        // Request location updates
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+        // New location has now been determined
+        String msg = "Updated Location: " +
+                Double.toString(location.getLatitude()) + "," +
+                Double.toString(location.getLongitude());
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        // You can now create a LatLng Object for use with maps
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+    }
 }

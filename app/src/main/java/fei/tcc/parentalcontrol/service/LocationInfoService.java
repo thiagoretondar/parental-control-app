@@ -8,16 +8,21 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-public class LocationInfoService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationInfoService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
+    private long FASTEST_INTERVAL = 2000; /* 2 sec */
 
     private static final String TAG = "LocationActivity";
     private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
     private Location mLocation;
 
     @Override
@@ -33,7 +38,7 @@ public class LocationInfoService extends Service implements GoogleApiClient.Conn
             @Override
             public void run() {
                 mGoogleApiClient.connect();
-                handler.postDelayed(this, 2000);
+                handler.postDelayed(this, 5000);
             }
         }, 1000);
 
@@ -49,7 +54,7 @@ public class LocationInfoService extends Service implements GoogleApiClient.Conn
         } else {
             Log.i(TAG, "Location not found");
         }
-        mGoogleApiClient.disconnect();
+        startLocationUpdates();
     }
 
     @Override
@@ -75,5 +80,26 @@ public class LocationInfoService extends Service implements GoogleApiClient.Conn
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        // New location has now been determined
+        String msg = "Updated Location: " +
+                Double.toString(location.getLatitude()) + "," +
+                Double.toString(location.getLongitude());
+        Log.i("LOCATION: ", msg);
+    }
+
+    // Trigger new location updates at interval
+    protected void startLocationUpdates() {
+        // Create the location request
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL);
+
+        // Request location updates
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 }
