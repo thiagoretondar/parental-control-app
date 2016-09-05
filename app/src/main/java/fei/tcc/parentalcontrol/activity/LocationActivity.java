@@ -1,37 +1,21 @@
 package fei.tcc.parentalcontrol.activity;
 
+import android.Manifest;
 import android.content.Intent;
-import android.location.Location;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 
 import fei.tcc.parentalcontrol.R;
 import fei.tcc.parentalcontrol.service.LocationInfoService;
 
-public class LocationActivity extends AppCompatActivity implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
-
-    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
-    private long FASTEST_INTERVAL = 2000; /* 2 sec */
+public class LocationActivity extends AppCompatActivity {
 
     private static final String TAG = "LocationActivity";
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLocation;
-    private LocationRequest mLocationRequest;
-    private TextView mLatitudeTextView;
-    private TextView mLongitudeTextView;
+    private static final int PERMISSION_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,79 +24,45 @@ public class LocationActivity extends AppCompatActivity implements LocationListe
 
         Intent intent = new Intent(this, LocationInfoService.class);
         startService(intent);
-
-        mLatitudeTextView = (TextView) findViewById((R.id.latitude_textview));
-        mLongitudeTextView = (TextView) findViewById((R.id.longitude_textview));
-
-        // Create the location client to start receiving updates
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
     }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLocation != null) {
-            mLatitudeTextView.setText(String.valueOf(mLocation.getLatitude()));
-            mLongitudeTextView.setText(String.valueOf(mLocation.getLongitude()));
-        } else {
-            Toast.makeText(this, "Location not Detected", Toast.LENGTH_SHORT).show();
-        }
-
-        startLocationUpdates();
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-
-        // Connect the client.
-        mGoogleApiClient.connect();
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Connection Suspended");
-        mGoogleApiClient.connect();
-    }
+    protected void onResume() {
+        super.onResume();
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
+        if (!checkPermission()) {
+            requestPermission();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
+    }
+
+    private boolean checkPermission(){
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        if (result == PackageManager.PERMISSION_GRANTED){
+            return true;
+        } else {
+            return false;
         }
     }
 
-    // Trigger new location updates at interval
-    protected void startLocationUpdates() {
-        // Create the location request
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL);
-
-        // Request location updates
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    private void requestPermission(){
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+            Toast.makeText(
+                    getApplicationContext(),
+                    "GPS permission allows us to access location data. Please allow in App Settings for additional functionality.",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
+        }
     }
 
 
-    @Override
-    public void onLocationChanged(Location location) {
-        // New location has now been determined
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        // You can now create a LatLng Object for use with maps
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-    }
 }
