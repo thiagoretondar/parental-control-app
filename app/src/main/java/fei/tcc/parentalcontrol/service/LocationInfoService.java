@@ -21,12 +21,10 @@ import com.google.android.gms.location.LocationServices;
 
 public class LocationInfoService extends Service implements ConnectionCallbacks, OnConnectionFailedListener {
 
-    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
-    private long FASTEST_INTERVAL = 2000; /* 2 sec */
+    private long UPDATE_INTERVAL = 2 * 1000;  /* 10 secs */
 
     private static final String TAG = "LocationActivity";
     private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
     private Location mLocation;
 
     @Override
@@ -43,24 +41,36 @@ public class LocationInfoService extends Service implements ConnectionCallbacks,
             @Override
             public void run() {
                 if (checkPermission()) {
+                    if (mGoogleApiClient.isConnected()) {
+                        Log.d(TAG, "Disconnecting to create a new connection with Google Api");
+                        mGoogleApiClient.disconnect();
+                    }
+
+                    Log.d(TAG, "Connecting with Google Api Client");
                     mGoogleApiClient.connect();
-                   // mGoogleApiClient.disconnect();
+                } else {
+                    Log.d(TAG, "App doesn' have permission to access location");
+                    // TODO here should must something to the database that identify it is disabled
                 }
-                handler.postDelayed(this, 2000);
+
+                Log.d(TAG, "Calling handler again");
+                handler.postDelayed(this, UPDATE_INTERVAL);
             }
-        }, 1000);
+        }, 1);
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.d(TAG, "Obtaining location onConnected");
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLocation != null) {
-            Log.i("LAT ", String.valueOf(mLocation.getLatitude()));
-            Log.i("LON ", String.valueOf(mLocation.getLongitude()));
+            Log.d(TAG, "Location isn't null, printing it");
+            Log.d("LAT ", String.valueOf(mLocation.getLatitude()));
+            Log.d("LON ", String.valueOf(mLocation.getLongitude()));
         } else {
-            Log.i(TAG, "Location not found");
+            Log.d(TAG, "Location not found");
         }
     }
 
@@ -97,28 +107,5 @@ public class LocationInfoService extends Service implements ConnectionCallbacks,
             return false;
         }
     }
-
-/*    @Override
-    public void onLocationChanged(Location location) {
-        // New location has now been determined
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
-        Log.i("LOCATION: ", msg);
-    }*/
-
-    // Trigger new location updates at interval
-/*    protected void startLocationUpdates() {
-        // Create the location request
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL);
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // Request location updates
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
-    }*/
 
 }
