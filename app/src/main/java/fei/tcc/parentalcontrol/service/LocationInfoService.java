@@ -21,7 +21,7 @@ import com.google.android.gms.location.LocationServices;
 
 public class LocationInfoService extends Service implements ConnectionCallbacks, OnConnectionFailedListener {
 
-    private long UPDATE_INTERVAL = 2 * 1000;  /* 10 secs */
+    private long UPDATE_INTERVAL = 30 * 1000;  /* 10 secs */
 
     private static final String TAG = "LocationActivity";
     private GoogleApiClient mGoogleApiClient;
