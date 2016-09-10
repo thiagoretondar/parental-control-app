@@ -46,4 +46,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cadastrar"/>
+
+    <TextView
+        android:id="@+id/link_redirect_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:text="Já tenho uma conta"/>
+
 </LinearLayout>
