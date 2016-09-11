@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (view.getId()) {
             case R.id.link_redirect_register:
                 startActivity(new Intent(this, RegisterActivity.class));
+                break;
         }
     }
 }
