@@ -19,25 +19,31 @@
             android:value="@integer/google_play_services_version" />
 
         <!-- DECLARING ACTIVITIES -->
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.LocationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.MainActivity"></activity>
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegisterActivity" />
+        <activity android:name=".activity.AppPermissionActivity">
+        </activity>
 
         <!-- DECLARING SERVICES -->
         <service
-        android:name=".service.AppUsageInfoService"
-        android:enabled="true"
-        android:exported="true" />
+            android:name=".service.AppUsageInfoService"
+            android:enabled="true"
+            android:exported="true" />
         <service
-        android:name=".service.LocationInfoService"
-        android:exported="false" />
-
+            android:name=".service.LocationInfoService"
+            android:exported="false" />
+        <service
+            android:name=".service.SendInfoService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

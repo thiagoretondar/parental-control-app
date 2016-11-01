@@ -8,6 +8,9 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
 import fei.tcc.parentalcontrol.dao.ForegroundAppDao;
 
 import static fei.tcc.parentalcontrol.component.ForegroundProcessManager.getForegroundApp;
@@ -47,8 +50,9 @@ public class AppUsageInfoService extends IntentService {
                     long currentTime = System.currentTimeMillis();
 
                     String appName = getAppName(foregroundApp);
-                    Log.i(TAG, "App name found: " + appName);
 
+                    Timestamp timestamp = new Timestamp(currentTime);
+                    Log.i(TAG, "App name found: " + appName + " . Time: " + currentTime + " - " + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(timestamp));
                     foregroundAppDao.insert(appName, currentTime);
 
                     handler.postDelayed(this, DELAY_SCREEN_UNLOCKED);

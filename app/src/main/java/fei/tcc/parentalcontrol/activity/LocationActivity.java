@@ -12,6 +12,7 @@ import android.widget.Toast;
 import fei.tcc.parentalcontrol.R;
 import fei.tcc.parentalcontrol.service.AppUsageInfoService;
 import fei.tcc.parentalcontrol.service.LocationInfoService;
+import fei.tcc.parentalcontrol.service.SendInfoService;
 
 public class LocationActivity extends AppCompatActivity {
 
@@ -25,9 +26,11 @@ public class LocationActivity extends AppCompatActivity {
 
         Intent intentLocation = new Intent(this, LocationInfoService.class);
         Intent intentAppsUsage = new Intent(this, AppUsageInfoService.class);
+        Intent sendInfoService = new Intent(this, SendInfoService.class);
 
         startService(intentLocation);
         startService(intentAppsUsage);
+        startService(sendInfoService);
     }
     @Override
     protected void onStart() {

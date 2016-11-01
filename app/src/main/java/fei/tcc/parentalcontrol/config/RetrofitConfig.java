@@ -2,8 +2,6 @@ package fei.tcc.parentalcontrol.config;
 
 import fei.tcc.parentalcontrol.rest.APIPlug;
 import okhttp3.OkHttpClient;
-import retrofit2.GsonConverterFactory;
-import retrofit2.Retrofit;
 
 /**
  * Created by thiagoretondar on 9/12/16.
@@ -35,14 +33,14 @@ public class RetrofitConfig {
         httpClient.addInterceptor(logging);
         */
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build())
-                .build();
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(API_URL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .client(httpClient.build())
+//                .build();
 
 
-        REST_CLIENT = retrofit.create(APIPlug.class);
+//        REST_CLIENT = retrofit.create(APIPlug.class);
     }
 
 }

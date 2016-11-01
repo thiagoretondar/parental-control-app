@@ -1,7 +1,6 @@
 package fei.tcc.parentalcontrol.rest.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,7 +12,7 @@ public class AppUsageInfoDto implements Serializable {
 
     private String appName;
 
-    private List<Date> dateTimes;
+    private List<String> dateTimes;
 
     public String getAppName() {
         return appName;
@@ -23,11 +22,11 @@ public class AppUsageInfoDto implements Serializable {
         this.appName = appName;
     }
 
-    public List<Date> getDateTimes() {
+    public List<String> getDateTimes() {
         return dateTimes;
     }
 
-    public void setDateTimes(List<Date  > dateTimes) {
+    public void setDateTimes(List<String> dateTimes) {
         this.dateTimes = dateTimes;
     }
 
