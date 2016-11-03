@@ -2,6 +2,9 @@ package fei.tcc.parentalcontrol.config;
 
 import fei.tcc.parentalcontrol.rest.APIPlug;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Created by thiagoretondar on 9/12/16.
@@ -9,7 +12,7 @@ import okhttp3.OkHttpClient;
 public class RetrofitConfig {
 
     private static APIPlug REST_CLIENT;
-    private static final String API_URL = "http://sandbox.apiplug.com:8000/demo/v1/"; //Change according to your API path.
+    private static final String API_URL = "http://192.168.0.104:8080";
 
     static {
         setupRestClient();
@@ -26,21 +29,13 @@ public class RetrofitConfig {
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
-        //Uncomment these lines below to start logging each request.
-        /*
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClient.addInterceptor(logging);
-        */
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(API_URL)
+                .addConverterFactory(JacksonConverterFactory.create())
+                .client(httpClient.build())
+                .build();
 
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(API_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .client(httpClient.build())
-//                .build();
-
-
-//        REST_CLIENT = retrofit.create(APIPlug.class);
+        REST_CLIENT = retrofit.create(APIPlug.class);
     }
 
 }
