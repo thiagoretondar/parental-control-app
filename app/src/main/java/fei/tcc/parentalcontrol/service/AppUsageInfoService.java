@@ -52,8 +52,9 @@ public class AppUsageInfoService extends IntentService {
                     String appName = getAppName(foregroundApp);
 
                     Timestamp timestamp = new Timestamp(currentTime);
-                    Log.i(TAG, "App name found: " + appName + " . Time: " + currentTime + " - " + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(timestamp));
                     foregroundAppDao.insert(appName, currentTime);
+
+                    Log.d(TAG, "App name saved: " + appName + " - Time: " + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(timestamp));
 
                     handler.postDelayed(this, DELAY_SCREEN_UNLOCKED);
                 } else {

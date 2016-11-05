@@ -18,11 +18,11 @@ public class AllAppsInfoDto implements Serializable {
     @JsonProperty("appUsageInfo")
     private List<AppUsageInfoDto> appUsageInfoList;
 
-    @JsonProperty("locationInfo")
-    private List<LocationInfoDto> locationInfoList;
-
-    @JsonProperty("mostUsedApps")
-    private List<MostUsedAppsDto> mostUsedAppsList;
+//    @JsonProperty("locationInfo")
+//    private List<LocationInfoDto> locationInfoList;
+//
+//    @JsonProperty("mostUsedApps")
+//    private List<MostUsedAppsDto> mostUsedAppsList;
 
     public Long getUserId() {
         return userId;
@@ -40,19 +40,19 @@ public class AllAppsInfoDto implements Serializable {
         this.appUsageInfoList = appUsageInfoList;
     }
 
-    public List<LocationInfoDto> getLocationInfoList() {
-        return locationInfoList;
-    }
-
-    public void setLocationInfoList(List<LocationInfoDto> locationInfoList) {
-        this.locationInfoList = locationInfoList;
-    }
-
-    public List<MostUsedAppsDto> getMostUsedAppsList() {
-        return mostUsedAppsList;
-    }
-
-    public void setMostUsedAppsList(List<MostUsedAppsDto> mostUsedAppsList) {
-        this.mostUsedAppsList = mostUsedAppsList;
-    }
+//    public List<LocationInfoDto> getLocationInfoList() {
+//        return locationInfoList;
+//    }
+//
+//    public void setLocationInfoList(List<LocationInfoDto> locationInfoList) {
+//        this.locationInfoList = locationInfoList;
+//    }
+//
+//    public List<MostUsedAppsDto> getMostUsedAppsList() {
+//        return mostUsedAppsList;
+//    }
+//
+//    public void setMostUsedAppsList(List<MostUsedAppsDto> mostUsedAppsList) {
+//        this.mostUsedAppsList = mostUsedAppsList;
+//    }
 }

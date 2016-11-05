@@ -23,7 +23,8 @@ public class PackageDao extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String sql = "CREATE TABLE package (" +
                 "id INTEGER PRIMARY KEY, " +
-                "packagename TEXT NOT NULL)";
+                "packagename TEXT NOT NULL" +
+                ")";
 
         sqLiteDatabase.execSQL(sql);
     }
