@@ -72,4 +72,14 @@ public enum BlackListPackageName {
     BlackListPackageName(String packageName) {
         this.packageName = packageName;
     }
+
+    public static boolean has(String packageName) {
+        for (BlackListPackageName blackListPackageName: BlackListPackageName.values()) {
+            if (packageName.contains(blackListPackageName.packageName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
