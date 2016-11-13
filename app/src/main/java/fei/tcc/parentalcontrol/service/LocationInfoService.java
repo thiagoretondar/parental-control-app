@@ -16,12 +16,15 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import fei.tcc.parentalcontrol.dao.LocationDao;
 
 public class LocationInfoService extends Service implements ConnectionCallbacks, OnConnectionFailedListener {
 
-    private long UPDATE_INTERVAL = 30 * 1000;  /* 10 secs */
+    private LocationDao locationDao;
+
+    private long UPDATE_INTERVAL = 120000;  /* 2 min */
 
     private static final String TAG = "LocationActivity";
     private GoogleApiClient mGoogleApiClient;
@@ -29,6 +32,8 @@ public class LocationInfoService extends Service implements ConnectionCallbacks,
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        locationDao = new LocationDao(this);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -66,6 +71,8 @@ public class LocationInfoService extends Service implements ConnectionCallbacks,
         Log.d(TAG, "Obtaining location onConnected");
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLocation != null) {
+            long currentTime = System.currentTimeMillis();
+            locationDao.insert(mLocation.getLatitude(), mLocation.getLongitude(), currentTime);
             Log.d(TAG, "Location isn't null, printing it");
             Log.d("LAT ", String.valueOf(mLocation.getLatitude()));
             Log.d("LON ", String.valueOf(mLocation.getLongitude()));

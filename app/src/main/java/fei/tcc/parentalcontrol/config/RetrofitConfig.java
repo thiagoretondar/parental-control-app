@@ -12,7 +12,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class RetrofitConfig {
 
     private static APIPlug REST_CLIENT;
-    private static final String API_URL = "http://10.0.44.69:8080";
+    private static final String API_URL = "http://192.168.0.103:8080";
 
     static {
         setupRestClient();
