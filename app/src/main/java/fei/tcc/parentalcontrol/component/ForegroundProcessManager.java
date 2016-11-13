@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import fei.tcc.parentalcontrol.utils.BlackListPackageName;
+
 import static java.lang.String.format;
 
 /**
@@ -67,15 +69,7 @@ public class ForegroundProcessManager {
                 String cmdline = read(format("/proc/%d/cmdline", pid)).trim();
                 Log.d(TAG, "Process found: " + cmdline);
 
-                if (cmdline.contains("com.android.systemui") ||
-                        cmdline.contains("com.mediatek.nlpservice") ||
-                        cmdline.contains("com.google.android.googlequicksearchbox:interactor") ||
-                        cmdline.contains("android.process.acore") ||
-                        cmdline.contains("android.process.media") ||
-                        cmdline.contains("com.android.vending") ||
-                        cmdline.contains("com.google.android.gms") ||
-                        cmdline.contains("com.android.defcontainer") ||
-                        cmdline.contains("com.google.process.gapps")) {
+                if (BlackListPackageName.has(cmdline)) {
                     Log.d(TAG, "Removing " + cmdline + " from the process list");
                     continue;
                 }
