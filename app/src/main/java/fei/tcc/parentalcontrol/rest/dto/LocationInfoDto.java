@@ -19,7 +19,7 @@ public class LocationInfoDto implements Serializable {
     private Double longitude;
 
     @JsonProperty("datetime")
-    private String datetime;
+    private Long datetime;
 
     public Double getLatitude() {
         return latitude;
@@ -37,11 +37,11 @@ public class LocationInfoDto implements Serializable {
         this.longitude = longitude;
     }
 
-    public String getDatetime() {
+    public Long getDatetime() {
         return datetime;
     }
 
-    public void setDatetime(String datetime) {
+    public void setDatetime(Long datetime) {
         this.datetime = datetime;
     }
 }

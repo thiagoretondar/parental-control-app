@@ -82,7 +82,7 @@ public class SendInfoService extends Service {
                 APIPlug apiPlug = RetrofitConfig.get();
 
                 // Get all the apps and the timestamp which one was used
-                Map<String, List<String>> allAppsUsage = foregroundAppDao.selectAllAppsUsage();
+                Map<String, List<Long>> allAppsUsage = foregroundAppDao.selectAllAppsUsage();
 
                 // Put all app usage information in DTO
                 List<AppUsageInfoDto> allAppsUsageList = new ArrayList<>();
@@ -97,11 +97,11 @@ public class SendInfoService extends Service {
 
 
                 // Get all the locations where phone was used
-                Map<String, List<Double>> allLocationsMap = locationDao.selectAllLocations();
+                Map<Long, List<Double>> allLocationsMap = locationDao.selectAllLocations();
                 Log.d("APIREST", "MAX TIMESTAMP IN LOCATION: " + locationDao.getMaxTimestamp());
                 // Put all app location information in DTO
                 List<LocationInfoDto> appLocationList = new ArrayList<>();
-                for (String locationKey : allLocationsMap.keySet()) {
+                for (Long locationKey : allLocationsMap.keySet()) {
                     LocationInfoDto appLocation = new LocationInfoDto();
                     appLocation.setDatetime(locationKey);
                     appLocation.setLatitude(allLocationsMap.get(locationKey).get(0));
@@ -127,22 +127,18 @@ public class SendInfoService extends Service {
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
                         LastDatetimeUsedDto bodyResponse = response.body();
 
-                        try {
-                            Long lastDateAppUsage = simpleDateFormat.parse(bodyResponse.getLastAppUsageDatetime()).getTime();
-                            Log.d("APIREST", "Received lastApp: " + lastDateAppUsage);
-                            Log.d("APIREST", "Before delete from database: " + foregroundAppDao.countAll());
-                            foregroundAppDao.deleteAllUntil(lastDateAppUsage);
-                            Log.d("APIREST", "After delete from database: " + foregroundAppDao.countAll());
+                        String lastDateAppUsage = simpleDateFormat.format(bodyResponse.getLastAppUsageDatetime());
+                        Log.d("APIREST", "Received lastApp: " + lastDateAppUsage);
+                        Log.d("APIREST", "Before delete from database: " + foregroundAppDao.countAll());
+                        foregroundAppDao.deleteAllUntil(bodyResponse.getLastAppUsageDatetime());
+                        Log.d("APIREST", "After delete from database: " + foregroundAppDao.countAll());
 
-                            Long lastDateLocationUsage = simpleDateFormat.parse(bodyResponse.getLastLocationUsageDatetime()).getTime();
-                            Log.d("APIREST", "Received lastLocation: " + lastDateLocationUsage);
-                            Log.d("APIREST", "Before delete from database: " + locationDao.countAll());
-                            locationDao.deleteAllUntil(lastDateLocationUsage);
-                            Log.d("APIREST", "After delete from database: " + locationDao.countAll());
+                        String lastDateLocationUsage = simpleDateFormat.format(bodyResponse.getLastLocationUsageDatetime());
+                        Log.d("APIREST", "Received lastLocation: " + lastDateLocationUsage);
+                        Log.d("APIREST", "Before delete from database: " + locationDao.countAll());
+                        locationDao.deleteAllUntil(bodyResponse.getLastLocationUsageDatetime());
+                        Log.d("APIREST", "After delete from database: " + locationDao.countAll());
 
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
                     }
 
                     @Override

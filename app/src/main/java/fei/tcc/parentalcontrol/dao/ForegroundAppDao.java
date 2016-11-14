@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,12 +48,10 @@ public class ForegroundAppDao extends SQLiteOpenHelper {
         db.insert(TABLE_NAME, null, values);
     }
 
-    public Map<String, List<String>> selectAllAppsUsage() {
-        Map<String, List<String>> allAppsUsage = new HashMap<>();
+    public Map<String, List<Long>> selectAllAppsUsage() {
+        Map<String, List<Long>> allAppsUsage = new HashMap<>();
         String packageName;
         Long usageTimestamp;
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_NAME;
@@ -65,10 +62,10 @@ public class ForegroundAppDao extends SQLiteOpenHelper {
             usageTimestamp = cursor.getLong(cursor.getColumnIndex("usage_timestamp"));
 
             if (allAppsUsage.containsKey(packageName)) {
-                allAppsUsage.get(packageName).add(simpleDateFormat.format(usageTimestamp));
+                allAppsUsage.get(packageName).add(usageTimestamp);
             } else {
-                ArrayList<String> newUsageTimeStampe = new ArrayList<>();
-                newUsageTimeStampe.add(simpleDateFormat.format(usageTimestamp));
+                ArrayList<Long> newUsageTimeStampe = new ArrayList<>();
+                newUsageTimeStampe.add(usageTimestamp);
                 allAppsUsage.put(packageName, newUsageTimeStampe);
             }
         }
@@ -76,5 +73,21 @@ public class ForegroundAppDao extends SQLiteOpenHelper {
         cursor.close();
 
         return allAppsUsage;
+    }
+
+    public void deleteAllUntil(Long lastDateAppUsage) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String[] param = {lastDateAppUsage.toString()};
+        db.delete(TABLE_NAME, "usage_timestamp <= ?", param);
+    }
+
+    public int countAll() {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_NAME;
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        return cursor.getCount();
     }
 }

@@ -11,9 +11,9 @@ public class LastDatetimeUsedDto implements Serializable {
 
     private Long userId;
 
-    private String lastAppUsageDatetime;
+    private Long lastAppUsageDatetime;
 
-    private String lastLocationUsageDatetime;
+    private Long lastLocationUsageDatetime;
 
     public Long getUserId() {
         return userId;
@@ -23,20 +23,20 @@ public class LastDatetimeUsedDto implements Serializable {
         this.userId = userId;
     }
 
-    public String getLastAppUsageDatetime() {
-        return lastAppUsageDatetime;
-    }
-
-    public void setLastAppUsageDatetime(String lastAppUsageDatetime) {
-        this.lastAppUsageDatetime = lastAppUsageDatetime;
-    }
-
-    public String getLastLocationUsageDatetime() {
+    public Long getLastLocationUsageDatetime() {
         return lastLocationUsageDatetime;
     }
 
-    public void setLastLocationUsageDatetime(String lastLocationUsageDatetime) {
+    public void setLastLocationUsageDatetime(Long lastLocationUsageDatetime) {
         this.lastLocationUsageDatetime = lastLocationUsageDatetime;
+    }
+
+    public Long getLastAppUsageDatetime() {
+        return lastAppUsageDatetime;
+    }
+
+    public void setLastAppUsageDatetime(Long lastAppUsageDatetime) {
+        this.lastAppUsageDatetime = lastAppUsageDatetime;
     }
 
 }

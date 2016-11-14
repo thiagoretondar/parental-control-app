@@ -12,7 +12,7 @@ public class AppUsageInfoDto implements Serializable {
 
     private String appName;
 
-    private List<String> dateTimes;
+    private List<Long> dateTimes;
 
     public String getAppName() {
         return appName;
@@ -22,11 +22,11 @@ public class AppUsageInfoDto implements Serializable {
         this.appName = appName;
     }
 
-    public List<String> getDateTimes() {
+    public List<Long> getDateTimes() {
         return dateTimes;
     }
 
-    public void setDateTimes(List<String> dateTimes) {
+    public void setDateTimes(List<Long> dateTimes) {
         this.dateTimes = dateTimes;
     }
 

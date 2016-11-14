@@ -72,7 +72,7 @@ public class LocationInfoService extends Service implements ConnectionCallbacks,
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLocation != null) {
             long currentTime = System.currentTimeMillis();
-            locationDao.insert(mLocation.getLatitude(), mLocation.getLongitude(), currentTime);
+            locationDao.insert(mLocation.getLatitude(), mLocation.getLongitude(), (currentTime / 1000) * 1000);
             Log.d(TAG, "Location isn't null, printing it");
             Log.d("LAT ", String.valueOf(mLocation.getLatitude()));
             Log.d("LON ", String.valueOf(mLocation.getLongitude()));

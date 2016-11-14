@@ -52,12 +52,10 @@ public class LocationDao extends SQLiteOpenHelper {
         db.insert(TABLE_NAME, null, values);
     }
 
-    public Map<String, List<Double>> selectAllLocations() {
-        Map<String, List<Double>> allLocationInfo = new HashMap<>();
+    public Map<Long, List<Double>> selectAllLocations() {
+        Map<Long, List<Double>> allLocationInfo = new HashMap<>();
         Long usageTimestamp;
         Double lat, lon;
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_NAME;
@@ -67,14 +65,40 @@ public class LocationDao extends SQLiteOpenHelper {
             usageTimestamp = cursor.getLong(cursor.getColumnIndex("usage_timestamp"));
             lat = cursor.getDouble(cursor.getColumnIndex("lat"));
             lon = cursor.getDouble(cursor.getColumnIndex("lon"));
-            String datetimeFormatted = simpleDateFormat.format(usageTimestamp);
 
             // first is latitude, in second is longitude
-            allLocationInfo.put(datetimeFormatted, asList(lat, lon));
+            allLocationInfo.put(usageTimestamp, asList(lat, lon));
         }
 
         cursor.close();
 
         return allLocationInfo;
     }
+
+    public void deleteAllUntil(Long lastDateLocationUsage) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String[] param = {lastDateLocationUsage.toString()};
+        db.delete(TABLE_NAME, "usage_timestamp <= ?", param);
+    }
+
+    public int countAll() {
+        SQLiteDatabase db = getReadableDatabase();
+        String sql = "SELECT * FROM " + TABLE_NAME;
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        return cursor.getCount();
+    }
+
+    public long getMaxTimestamp() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String sql = "SELECT MAX(usage_timestamp) as usage_timestamp FROM " + TABLE_NAME;
+
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+        return cursor.getLong(cursor.getColumnIndex("usage_timestamp"));
+    }
+
 }
