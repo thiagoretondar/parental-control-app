@@ -47,7 +47,7 @@ public class SendInfoService extends Service {
 
     private LocationDao locationDao;
 
-    private static final Integer SEND_INFO_TIME = 300000 / 2;
+    private static final Integer SEND_INFO_TIME = 300000;
 
     private static final Integer TOTAL_MOST_USED_APPS = 3;
 
