@@ -12,10 +12,13 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import fei.tcc.parentalcontrol.config.RetrofitConfig;
@@ -24,6 +27,7 @@ import fei.tcc.parentalcontrol.dao.LocationDao;
 import fei.tcc.parentalcontrol.rest.APIPlug;
 import fei.tcc.parentalcontrol.rest.dto.AllAppsInfoDto;
 import fei.tcc.parentalcontrol.rest.dto.AppUsageInfoDto;
+import fei.tcc.parentalcontrol.rest.dto.LastDatetimeUsedDto;
 import fei.tcc.parentalcontrol.rest.dto.LocationInfoDto;
 import fei.tcc.parentalcontrol.rest.dto.MostUsedAppsDto;
 import fei.tcc.parentalcontrol.utils.BlackListPackageName;
@@ -94,7 +98,7 @@ public class SendInfoService extends Service {
 
                 // Get all the locations where phone was used
                 Map<String, List<Double>> allLocationsMap = locationDao.selectAllLocations();
-
+                Log.d("APIREST", "MAX TIMESTAMP IN LOCATION: " + locationDao.getMaxTimestamp());
                 // Put all app location information in DTO
                 List<LocationInfoDto> appLocationList = new ArrayList<>();
                 for (String locationKey : allLocationsMap.keySet()) {
@@ -115,16 +119,34 @@ public class SendInfoService extends Service {
                 allAppsInfoDto.setUserId(1L);
 
                 Log.d("APIREST", "Enviando para /app");
-                final Call<String> stringCall = apiPlug.sendAllAppsInfo(allAppsInfoDto);
+                final Call<LastDatetimeUsedDto> stringCall = apiPlug.sendAllAppsInfo(allAppsInfoDto);
 
-                stringCall.enqueue(new Callback<String>() {
+                stringCall.enqueue(new Callback<LastDatetimeUsedDto>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        Log.d("APIREST", "SENDED para /app");
+                    public void onResponse(Call<LastDatetimeUsedDto> call, Response<LastDatetimeUsedDto> response) {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+                        LastDatetimeUsedDto bodyResponse = response.body();
+
+                        try {
+                            Long lastDateAppUsage = simpleDateFormat.parse(bodyResponse.getLastAppUsageDatetime()).getTime();
+                            Log.d("APIREST", "Received lastApp: " + lastDateAppUsage);
+                            Log.d("APIREST", "Before delete from database: " + foregroundAppDao.countAll());
+                            foregroundAppDao.deleteAllUntil(lastDateAppUsage);
+                            Log.d("APIREST", "After delete from database: " + foregroundAppDao.countAll());
+
+                            Long lastDateLocationUsage = simpleDateFormat.parse(bodyResponse.getLastLocationUsageDatetime()).getTime();
+                            Log.d("APIREST", "Received lastLocation: " + lastDateLocationUsage);
+                            Log.d("APIREST", "Before delete from database: " + locationDao.countAll());
+                            locationDao.deleteAllUntil(lastDateLocationUsage);
+                            Log.d("APIREST", "After delete from database: " + locationDao.countAll());
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(Call<LastDatetimeUsedDto> call, Throwable t) {
                         Log.d("APIREST", "FAILED para /app", t);
                     }
                 });
