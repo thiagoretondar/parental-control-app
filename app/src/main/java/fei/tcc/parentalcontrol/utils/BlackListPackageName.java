@@ -22,7 +22,7 @@ public enum BlackListPackageName {
     CERT_INSTALLER("com.android.certinstaller"),
     CARRIER_CONFIG("com.android.carrierconfig"),
     BACKUP_CONFIRM("com.android.backupconfirm"),
-    ANDROID_LAUNCHER("com.google.android.launcher"),
+    //ANDROID_LAUNCHER("com.google.android.launcher"),
     STATEMENT_SERVICE("com.android.statementservice"),
     SHARED_STORARAGE_BACKUP("com.android.sharedstoragebackup"),
     PRINT_SPOOLER("com.android.printspooler"),
