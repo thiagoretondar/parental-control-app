@@ -98,7 +98,6 @@ public class SendInfoService extends Service {
 
                 // Get all the locations where phone was used
                 Map<Long, List<Double>> allLocationsMap = locationDao.selectAllLocations();
-                Log.d("APIREST", "MAX TIMESTAMP IN LOCATION: " + locationDao.getMaxTimestamp());
                 // Put all app location information in DTO
                 List<LocationInfoDto> appLocationList = new ArrayList<>();
                 for (Long locationKey : allLocationsMap.keySet()) {
