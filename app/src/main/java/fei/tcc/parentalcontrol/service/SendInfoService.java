@@ -1,6 +1,6 @@
 package fei.tcc.parentalcontrol.service;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
@@ -8,11 +8,9 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,7 +35,7 @@ import retrofit2.Response;
 
 import static java.util.Collections.sort;
 
-public class SendInfoService extends Service {
+public class SendInfoService extends IntentService {
 
     private static final String TAG = "REST SERVICE";
 
@@ -51,13 +49,12 @@ public class SendInfoService extends Service {
 
     private static final Integer TOTAL_MOST_USED_APPS = 3;
 
-    public SendInfoService() {
+    public SendInfoService(String name) {
+        super(name);
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+    public SendInfoService() {
+        this(SendInfoService.class.getName());
     }
 
     @Override
@@ -115,7 +112,7 @@ public class SendInfoService extends Service {
                 allAppsInfoDto.setMostUsedAppsList(mostUsedAppsList);
 
                 // Set USER ID in DTO
-                allAppsInfoDto.setUserId(1L);
+                allAppsInfoDto.setUserId(2L);
 
                 Log.d("APIREST", "Enviando para /app");
                 final Call<LastDatetimeUsedDto> stringCall = apiPlug.sendAllAppsInfo(allAppsInfoDto);
@@ -153,6 +150,10 @@ public class SendInfoService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
+    }
 
 
     /**

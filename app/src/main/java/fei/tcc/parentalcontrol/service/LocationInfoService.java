@@ -1,14 +1,12 @@
 package fei.tcc.parentalcontrol.service;
 
 import android.Manifest;
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -20,7 +18,7 @@ import com.google.android.gms.location.LocationServices;
 
 import fei.tcc.parentalcontrol.dao.LocationDao;
 
-public class LocationInfoService extends Service implements ConnectionCallbacks, OnConnectionFailedListener {
+public class LocationInfoService extends IntentService implements ConnectionCallbacks, OnConnectionFailedListener {
 
     private LocationDao locationDao;
 
@@ -29,6 +27,14 @@ public class LocationInfoService extends Service implements ConnectionCallbacks,
     private static final String TAG = "LocationActivity";
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
+
+    public LocationInfoService() {
+        this(LocationInfoService.class.getName());
+    }
+
+    public LocationInfoService(String name) {
+        super(name);
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -100,10 +106,9 @@ public class LocationInfoService extends Service implements ConnectionCallbacks,
         }
     }
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    protected void onHandleIntent(Intent intent) {
+
     }
 
     private boolean checkPermission(){
