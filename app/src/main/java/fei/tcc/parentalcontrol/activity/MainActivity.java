@@ -2,7 +2,10 @@ package fei.tcc.parentalcontrol.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.provider.Settings.Secure;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -14,6 +17,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button registerButton;
 
     private Button loginButton;
+
+    private String deviceId;
+
+    private static final String TAG = MainActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +34,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+
+        deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+
+        Log.i(TAG, deviceId);
 
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
