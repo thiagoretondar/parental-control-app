@@ -2,14 +2,12 @@ package fei.tcc.parentalcontrol.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.provider.Settings.Secure;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import fei.tcc.parentalcontrol.R;
+import fei.tcc.parentalcontrol.dao.UserDao;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -18,7 +16,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button loginButton;
 
-    private String deviceId;
+    private UserDao userDao;
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -26,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        userDao = new UserDao(MainActivity.this);
 
         loginButton = (Button) findViewById(R.id.login_btn);
         registerButton = (Button) findViewById(R.id.register_btn);
@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
 
-        deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
-
-        Log.i(TAG, deviceId);
+        if (userDao.existsUser()) {
+            redirectToAppUsageActivity();
+        }
 
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
@@ -53,5 +53,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, RegisterActivity.class));
                 break;
         }
+    }
+
+    private void redirectToAppUsageActivity() {
+        Intent appUsageActivity = new Intent(MainActivity.this, ListAppsActivity.class);
+        startActivity(appUsageActivity);
     }
 }

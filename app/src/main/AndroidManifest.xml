@@ -19,18 +19,18 @@
             android:value="@integer/google_play_services_version" />
 
         <!-- DECLARING ACTIVITIES -->
-        <activity android:name=".activity.LocationActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".activity.MainActivity"></activity>
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.RegisterActivity" />
-        <activity android:name=".activity.AppPermissionActivity">
-        </activity>
+        <activity android:name=".activity.MainActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+        <activity android:name=".activity.LocationActivity"></activity>
+        <activity android:name=".activity.ListAppsActivity"></activity>
+        <activity android:name=".activity.LoginActivity"></activity>
+        <activity android:name=".activity.RegisterActivity"></activity>
+        <activity android:name=".activity.AppPermissionActivity"></activity>
+        <activity android:name=".activity.AppUsageActivity"></activity>
 
         <!-- DECLARING SERVICES -->
         <service

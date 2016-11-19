@@ -13,7 +13,18 @@
         android:text="Nome" />
 
     <EditText
-        android:id="@+id/edit_text_parent_name"
+        android:id="@+id/edit_text_parent_firstname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sobrenome" />
+
+    <EditText
+        android:id="@+id/edit_text_parent_lastname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp" />
