@@ -49,14 +49,14 @@ public class UserDao extends SQLiteOpenHelper {
         db.insert(TABLE_NAME, null, values);
     }
 
-    public Integer selectIdFromUser() {
+    public Long selectIdFromUser() {
         SQLiteDatabase db = getReadableDatabase();
         String sql = "SELECT * FROM " + TABLE_NAME;
 
         Cursor cursor = db.rawQuery(sql, null);
         cursor.moveToFirst();
 
-        return cursor.getInt(cursor.getColumnIndex("user_id"));
+        return cursor.getLong(cursor.getColumnIndex("user_id"));
     }
 
     public String selectDeviceIdFromUser() {

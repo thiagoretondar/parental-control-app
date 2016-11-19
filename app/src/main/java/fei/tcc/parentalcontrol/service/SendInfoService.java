@@ -22,6 +22,7 @@ import java.util.Map;
 import fei.tcc.parentalcontrol.config.RetrofitConfig;
 import fei.tcc.parentalcontrol.dao.ForegroundAppDao;
 import fei.tcc.parentalcontrol.dao.LocationDao;
+import fei.tcc.parentalcontrol.dao.UserDao;
 import fei.tcc.parentalcontrol.rest.APIPlug;
 import fei.tcc.parentalcontrol.rest.dto.AllAppsInfoDto;
 import fei.tcc.parentalcontrol.rest.dto.AppUsageInfoDto;
@@ -49,6 +50,8 @@ public class SendInfoService extends IntentService {
 
     private static final Integer TOTAL_MOST_USED_APPS = 3;
 
+    private UserDao userDao;
+
     public SendInfoService(String name) {
         super(name);
     }
@@ -66,6 +69,7 @@ public class SendInfoService extends IntentService {
         // Initalize DAOs
         foregroundAppDao = new ForegroundAppDao(this);
         locationDao = new LocationDao(this);
+        userDao = new UserDao(this);
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -112,7 +116,7 @@ public class SendInfoService extends IntentService {
                 allAppsInfoDto.setMostUsedAppsList(mostUsedAppsList);
 
                 // Set USER ID in DTO
-                allAppsInfoDto.setUserId(2L);
+                allAppsInfoDto.setUserId(userDao.selectIdFromUser());
 
                 Log.d("APIREST", "Enviando para /app");
                 final Call<LastDatetimeUsedDto> stringCall = apiPlug.sendAllAppsInfo(allAppsInfoDto);
