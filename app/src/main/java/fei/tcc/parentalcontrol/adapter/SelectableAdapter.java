@@ -55,7 +55,7 @@ public class SelectableAdapter extends ArrayAdapter<AppVo> {
 
         holder.itemName.setText(list.get(position).getName());
         holder.itemIcon.setImageDrawable(list.get(position).getIcon());
-        holder.itemTime.setText("Time: " + String.valueOf(hours) + "h");
+        holder.itemTime.setText("Tempo: " + String.valueOf(hours) + "h");
 
         return view;
     }

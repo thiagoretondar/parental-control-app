@@ -26,6 +26,7 @@ import java.util.List;
 
 import fei.tcc.parentalcontrol.R;
 import fei.tcc.parentalcontrol.adapter.SelectableAdapter;
+import fei.tcc.parentalcontrol.utils.BlackListPackageName;
 import fei.tcc.parentalcontrol.vo.AppVo;
 
 import static android.widget.AbsListView.CHOICE_MODE_MULTIPLE_MODAL;
@@ -53,16 +54,12 @@ public class ListAppsActivity extends AppCompatActivity {
 
         appListView = (ListView) findViewById(R.id.list_apps);
 
-        appListView.setChoiceMode(CHOICE_MODE_MULTIPLE_MODAL);
-
         // Obtain the installed apps in system
         List<AppVo> apps = getInstalledApps();
 
-        sAdapter = new SelectableAdapter(this, android.R.layout.simple_list_item_multiple_choice, apps);
+        sAdapter = new SelectableAdapter(this, android.R.layout.simple_list_item_1, apps);
 
         appListView.setAdapter(sAdapter);
-
-        //selectAllItemsByDefault(apps);
 
     }
 
@@ -90,17 +87,6 @@ public class ListAppsActivity extends AppCompatActivity {
     }
 
     /**
-     * Select all apps passed
-     *
-     * @param apps apps to be selected
-     */
-    private void selectAllItemsByDefault(List<AppVo> apps) {
-        for (int i = 0; i < apps.size(); i++) {
-            appListView.setItemChecked(i, true);
-        }
-    }
-
-    /**
      * Use PackageManager to get the list of installed apps
      *
      * @return list of apps installed
@@ -116,25 +102,26 @@ public class ListAppsActivity extends AppCompatActivity {
 
         List<AppVo> apps = new ArrayList<>();
         for (UsageStats usageStat : usageStatistics) {
-            AppVo app = new AppVo();
-
             String packageName = usageStat.getPackageName();
+            if (!BlackListPackageName.has(packageName)) {
+                AppVo app = new AppVo();
 
-            try {
-                // TODO what is zero?
-                ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
-                Drawable applicationIcon = pm.getApplicationIcon(applicationInfo);
-                String applicationName = pm.getApplicationLabel(applicationInfo).toString();
+                try {
+                    // TODO what is zero?
+                    ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
+                    Drawable applicationIcon = pm.getApplicationIcon(applicationInfo);
+                    String applicationName = pm.getApplicationLabel(applicationInfo).toString();
 
-                app.setName(applicationName);
-                app.setIcon(applicationIcon);
-                app.setUsageStats(usageStat);
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.w(TAG, "ApplicationInfo not found with package " + packageName);
-                e.printStackTrace();
+                    app.setName(applicationName);
+                    app.setIcon(applicationIcon);
+                    app.setUsageStats(usageStat);
+                } catch (PackageManager.NameNotFoundException e) {
+                    Log.w(TAG, "ApplicationInfo not found with package " + packageName);
+                    e.printStackTrace();
+                }
+
+                apps.add(app);
             }
-
-            apps.add(app);
         }
 
         return apps;

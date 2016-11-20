@@ -27,6 +27,8 @@ public class AppPermissionActivity extends AppCompatActivity implements View.OnC
 
     private Button packagesPermissionButton;
 
+    private Button startMonitoringButton;
+
     private  AppOpsManager appOps;
 
     @Override
@@ -38,6 +40,7 @@ public class AppPermissionActivity extends AppCompatActivity implements View.OnC
 
         locationPermissionButton = (Button) findViewById(R.id.button_location_permission);
         packagesPermissionButton = (Button) findViewById(R.id.button_packages_permission);
+        startMonitoringButton = (Button) findViewById(R.id.button_start_monitoring);
     }
 
     @Override
@@ -46,6 +49,7 @@ public class AppPermissionActivity extends AppCompatActivity implements View.OnC
 
         locationPermissionButton.setOnClickListener(this);
         packagesPermissionButton.setOnClickListener(this);
+        startMonitoringButton.setOnClickListener(this);
     }
 
     @Override
@@ -67,6 +71,10 @@ public class AppPermissionActivity extends AppCompatActivity implements View.OnC
                 } else {
                     startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
                 }
+                break;
+            case R.id.button_start_monitoring:
+                Intent appUsageActivity = new Intent(AppPermissionActivity.this, ListAppsActivity.class);
+                startActivity(appUsageActivity);
                 break;
         }
     }

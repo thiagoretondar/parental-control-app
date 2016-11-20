@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:text="Começar a monitorar!"
         android:allowUndo="false"
-        android:id="@+id/start_monitoring_btn"
+        android:id="@+id/button_start_monitoring"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
