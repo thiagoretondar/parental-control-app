@@ -2,7 +2,6 @@ package fei.tcc.parentalcontrol.config;
 
 import fei.tcc.parentalcontrol.rest.APIPlug;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -12,7 +11,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class RetrofitConfig {
 
     private static APIPlug REST_CLIENT;
-    private static final String API_URL = "http://192.168.0.103:8080";
+    private static final String API_URL = "http://67.205.155.114:8080";
 
     static {
         setupRestClient();
