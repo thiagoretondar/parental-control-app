@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onResume();
 
         if (userDao.existsUser()) {
-            redirectToAppUsageActivity();
+            redirectToActivity(ListAppsActivity.class);
         }
 
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -100,7 +100,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                         userDao.insert(userId, deviceId);
 
-                        redirectToAppUsageActivity();
+                        redirectToActivity(AppPermissionActivity.class);
                     }
 
                     @Override
@@ -113,8 +113,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void redirectToAppUsageActivity() {
-        Intent appUsageActivity = new Intent(RegisterActivity.this, ListAppsActivity.class);
+    private void redirectToActivity(Class<?> cls) {
+        Intent appUsageActivity = new Intent(RegisterActivity.this, cls);
         startActivity(appUsageActivity);
     }
 }

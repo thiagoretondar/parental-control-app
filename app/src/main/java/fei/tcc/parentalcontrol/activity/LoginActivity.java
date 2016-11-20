@@ -1,5 +1,6 @@
 package fei.tcc.parentalcontrol.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -54,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onResume();
 
         if (userDao.existsUser()) {
-            redirectToAppUsageActivity();
+            redirectToActivity(ListAppsActivity.class);
         }
 
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -92,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         userDao.insert(userId, deviceId);
 
-                        redirectToAppUsageActivity();
+                        redirectToActivity(AppPermissionActivity.class);
                     }
 
                     @Override
@@ -104,8 +105,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void redirectToAppUsageActivity() {
-        Intent appUsageActivity = new Intent(LoginActivity.this, ListAppsActivity.class);
+    private void redirectToActivity(Class<?> cls) {
+        Intent appUsageActivity = new Intent(LoginActivity.this, cls);
         startActivity(appUsageActivity);
     }
 }

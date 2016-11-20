@@ -1,6 +1,5 @@
 package fei.tcc.parentalcontrol.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
@@ -10,7 +9,6 @@ import java.util.List;
 
 import fei.tcc.parentalcontrol.R;
 import fei.tcc.parentalcontrol.dao.PackageDao;
-import fei.tcc.parentalcontrol.service.AppUsageInfoService;
 
 public class AppUsageActivity extends AppCompatActivity {
 
@@ -21,12 +19,12 @@ public class AppUsageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(this, AppUsageInfoService.class);
+        //Intent intent = new Intent(this, AppUsageInfoService.class);
 
         setContentView(R.layout.activity_app_usage);
         packageView = (ListView) findViewById(R.id.list_package);
 
-        startService(intent);
+        //startService(intent);
     }
 
     @Override
