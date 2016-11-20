@@ -2,6 +2,7 @@ package fei.tcc.parentalcontrol.activity;
 
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -11,6 +12,9 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -43,7 +47,7 @@ public class ListAppsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_apps);
 
-        mUsageStatsManager = (UsageStatsManager) this.getSystemService("usagestats"); //Context.USAGE_STATS_SERVICE
+        mUsageStatsManager = (UsageStatsManager) this.getSystemService(Context.USAGE_STATS_SERVICE);
 
         mOpenUsageSettingButton = (Button) findViewById(R.id.button_open_usage_setting);
 
@@ -60,6 +64,29 @@ public class ListAppsActivity extends AppCompatActivity {
 
         //selectAllItemsByDefault(apps);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.app_menu_action, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.permission_btn:
+
+                Intent appUsageActivity = new Intent(ListAppsActivity.this, AppPermissionActivity.class);
+                startActivity(appUsageActivity);
+
+                finish();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**

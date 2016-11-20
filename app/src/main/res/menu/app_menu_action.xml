@@ -4,7 +4,7 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/delete"
-        android:title="Delete" />
+        android:id="@+id/permission_btn"
+        android:title="Verificar permissões" />
 
 </menu>
