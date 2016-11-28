@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context="fei.tcc.parentalcontrol.activity.DeviceRegisterActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nome do filho"
+        android:id="@+id/textView6" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_user_name"
+        android:layout_below="@+id/textView6"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sexo"
+        android:layout_below="@+id/edit_text_user_name"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView2" />
+
+    <Spinner
+        android:id="@+id/spinner_user_sex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawSelectorOnTop="true"
+        android:entries="@array/sex_options"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spinner_user_sex"
+        android:text="Data de nascimento"
+        android:id="@+id/textView3" />
+
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_user_day"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:maxLength="2"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="/"
+        android:layout_alignBottom="@+id/edit_text_user_day"
+        android:layout_toEndOf="@+id/edit_text_user_day"
+        android:id="@+id/textView4" />
+
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_user_month"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:maxLength="2"
+        android:layout_alignBaseline="@+id/edit_text_user_day"
+        android:layout_alignBottom="@+id/edit_text_user_day"
+        android:layout_toEndOf="@+id/textView4" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="/"
+        android:layout_alignBottom="@+id/edit_text_user_month"
+        android:layout_toEndOf="@+id/edit_text_user_month"
+        android:id="@+id/textView5" />
+
+    <EditText
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_user_year"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:maxLength="4"
+        android:layout_alignBottom="@+id/textView5"
+        android:layout_toEndOf="@+id/textView5" />
+
+    <Button
+        android:id="@+id/btn_create_child_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cadastrar"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

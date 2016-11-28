@@ -51,11 +51,17 @@ public class SelectableAdapter extends ArrayAdapter<AppVo> {
             holder = (ViewHolder) view.getTag();
         }
 
-        long hours = (list.get(position).getUsageStats().getTotalTimeInForeground() / (1000 * 60 * 60)) % 24;
+        if (list.get(position) == null || list.get(position).getUsageStats() == null) {
+            return view;
+        }
+
+        int totalMinutes = (int) (list.get(position).getUsageStats().getTotalTimeInForeground() / (1000 * 60));
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
 
         holder.itemName.setText(list.get(position).getName());
         holder.itemIcon.setImageDrawable(list.get(position).getIcon());
-        holder.itemTime.setText("Tempo: " + String.valueOf(hours) + "h");
+        holder.itemTime.setText("Tempo: " + hours + "h " + minutes + "min");
 
         return view;
     }

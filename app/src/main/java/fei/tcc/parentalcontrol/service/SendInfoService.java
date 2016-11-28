@@ -46,7 +46,7 @@ public class SendInfoService extends IntentService {
 
     private LocationDao locationDao;
 
-    private static final Integer SEND_INFO_TIME = 300000;
+    private static final Integer SEND_INFO_TIME = 300000 / 3;
 
     private static final Integer TOTAL_MOST_USED_APPS = 3;
 
@@ -176,34 +176,35 @@ public class SendInfoService extends IntentService {
 
         List<MostUsedAppsDto> apps = new ArrayList<>();
         for (UsageStats usageStat : usageStatistics) {
-            if (!BlackListPackageName.has(usageStat.getPackageName())) {
+            if ((usageStat.getTotalTimeInForeground() / (1000 * 60)) / 60 >= 1) { // greater than one hour
+                if (!BlackListPackageName.has(usageStat.getPackageName())) {
 
-                String packageName = usageStat.getPackageName();
+                    String packageName = usageStat.getPackageName();
 
-                try {
-                    // TODO what is zero?
-                    ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
-                    String applicationName = pm.getApplicationLabel(applicationInfo).toString();
+                    try {
+                        // TODO what is zero?
+                        ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
+                        String applicationName = pm.getApplicationLabel(applicationInfo).toString();
 
-                    int totalMinutes = (int) (usageStat.getTotalTimeInForeground() / (1000 * 60)) % 60;
+                        int totalMinutes = (int) (usageStat.getTotalTimeInForeground() / (1000 * 60));
 
-                    int hours = totalMinutes / 60;
-                    int minutes = totalMinutes % 60;
+                        int hours = totalMinutes / 60;
+                        int minutes = totalMinutes % 60;
 
 
-                    // only add if hours and minutes are different than zero
-                    if (hours != 0 || minutes != 0) {
-                        MostUsedAppsDto mostUsedAppsDto = new MostUsedAppsDto();
-                        mostUsedAppsDto.setName(applicationName);
-                        mostUsedAppsDto.setHours(hours);
-                        mostUsedAppsDto.setMinutes(minutes);
+                        // only add if hours and minutes are different than zero
+                        if (hours != 0 || minutes != 0) {
+                            MostUsedAppsDto mostUsedAppsDto = new MostUsedAppsDto();
+                            mostUsedAppsDto.setName(applicationName);
+                            mostUsedAppsDto.setHours(hours);
+                            mostUsedAppsDto.setMinutes(minutes);
 
-                        apps.add(mostUsedAppsDto);
+                            apps.add(mostUsedAppsDto);
+                        }
+                    } catch (PackageManager.NameNotFoundException e) {
+                        Log.w(TAG, "ApplicationInfo not found with package " + packageName);
                     }
-                } catch (PackageManager.NameNotFoundException e) {
-                    Log.w(TAG, "ApplicationInfo not found with package " + packageName);
                 }
-
             }
         }
 
@@ -234,7 +235,7 @@ public class SendInfoService extends IntentService {
     public List<UsageStats> getUsageStatistics(int intervalType) {
         // Get the app statistics since one year ago from the current time.
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -1);
+        cal.add(Calendar.DATE, -365);
 
         List<UsageStats> queryUsageStats = mUsageStatsManager
                 .queryUsageStats(intervalType, cal.getTimeInMillis(),

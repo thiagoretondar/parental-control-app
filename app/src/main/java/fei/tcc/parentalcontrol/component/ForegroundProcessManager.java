@@ -56,10 +56,10 @@ public class ForegroundProcessManager {
                 String cpuSubsystem = lines[0];
                 String cpuaccctSubsystem = lines[lines.length - 1];
 
-                if (!cpuaccctSubsystem.endsWith(Integer.toString(pid))) {
-                    // not an application process
-                    continue;
-                }
+                        if (!cpuaccctSubsystem.endsWith(Integer.toString(pid))) {
+                            // not an application process
+                            continue;
+                        }
 
                 if (cpuSubsystem.endsWith("bg_non_interactive")) {
                     // background policy

@@ -5,4 +5,8 @@
         statistics. You may need to enable access
         for this app through Settings > Security > Apps with usage access
     </string>
+    <string-array name="sex_options">
+        <item>Masculino</item>
+        <item>Feminino</item>
+    </string-array>
 </resources>

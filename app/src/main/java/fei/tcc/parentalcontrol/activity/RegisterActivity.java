@@ -15,7 +15,7 @@ import fei.tcc.parentalcontrol.config.RetrofitConfig;
 import fei.tcc.parentalcontrol.dao.UserDao;
 import fei.tcc.parentalcontrol.rest.APIPlug;
 import fei.tcc.parentalcontrol.rest.dto.ParentCreationDto;
-import fei.tcc.parentalcontrol.rest.dto.UserLoginIdResponseDto;
+import fei.tcc.parentalcontrol.rest.dto.ParentLoginIdResponseDto;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,8 +59,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
 
-        if (userDao.existsUser()) {
-            redirectToActivity(ListAppsActivity.class);
+        if (userDao.existsParent()) {
+            redirectToActivity(DeviceRegisterActivity.class);
         }
 
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -85,26 +85,26 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 parentCreationDto.setEmail(email.getText().toString());
                 parentCreationDto.setPassword(password.getText().toString());
 
-                Call<UserLoginIdResponseDto> newParentCall = apiPlug.createNewParentUser(parentCreationDto);
-                newParentCall.enqueue(new Callback<UserLoginIdResponseDto>() {
+                Call<ParentLoginIdResponseDto> newParentCall = apiPlug.createNewParentUser(parentCreationDto);
+                newParentCall.enqueue(new Callback<ParentLoginIdResponseDto>() {
                     @Override
-                    public void onResponse(Call<UserLoginIdResponseDto> call, Response<UserLoginIdResponseDto> response) {
-                        UserLoginIdResponseDto newUser = response.body();
+                    public void onResponse(Call<ParentLoginIdResponseDto> call, Response<ParentLoginIdResponseDto> response) {
+                        ParentLoginIdResponseDto parentNewUser = response.body();
 
-                        if (!newUser.getLogged() || newUser.getUserId() == -1) {
+                        if (!parentNewUser.getLogged() || parentNewUser.getParentId() == -1) {
                             Toast.makeText(RegisterActivity.this, "Usuário já cadastrado", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        Integer userId = newUser.getUserId();
+                        Integer parentNewUserId = parentNewUser.getParentId();
 
-                        userDao.insert(userId, deviceId);
+                        userDao.insertParent(parentNewUserId);
 
-                        redirectToActivity(AppPermissionActivity.class);
+                        redirectToActivity(DeviceRegisterActivity.class);
                     }
 
                     @Override
-                    public void onFailure(Call<UserLoginIdResponseDto> call, Throwable t) {
+                    public void onFailure(Call<ParentLoginIdResponseDto> call, Throwable t) {
                         Toast.makeText(RegisterActivity.this, "Falha ao criar usuário!", Toast.LENGTH_SHORT).show();
                     }
                 });

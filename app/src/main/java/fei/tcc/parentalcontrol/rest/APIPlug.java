@@ -4,6 +4,8 @@ import fei.tcc.parentalcontrol.rest.dto.AllAppsInfoDto;
 import fei.tcc.parentalcontrol.rest.dto.LastDatetimeUsedDto;
 import fei.tcc.parentalcontrol.rest.dto.ParentCreationDto;
 import fei.tcc.parentalcontrol.rest.dto.ParentLoginDto;
+import fei.tcc.parentalcontrol.rest.dto.ParentLoginIdResponseDto;
+import fei.tcc.parentalcontrol.rest.dto.UserChildCreationDto;
 import fei.tcc.parentalcontrol.rest.dto.UserLoginIdResponseDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -18,9 +20,11 @@ public interface APIPlug {
     Call<LastDatetimeUsedDto> sendAllAppsInfo(@Body AllAppsInfoDto allAppsInfoDto);
 
     @POST("/parent/create")
-    Call<UserLoginIdResponseDto> createNewParentUser(@Body ParentCreationDto parentCreationDto);
+    Call<ParentLoginIdResponseDto> createNewParentUser(@Body ParentCreationDto parentCreationDto);
 
     @POST("/parent/login")
-    Call<UserLoginIdResponseDto> loginUserParent(@Body ParentLoginDto parentLoginDto);
+    Call<ParentLoginIdResponseDto> loginUserParent(@Body ParentLoginDto parentLoginDto);
 
+    @POST("/parent/user/create")
+    Call<UserLoginIdResponseDto> createUserChild(@Body UserChildCreationDto userChildCreationDto);
 }

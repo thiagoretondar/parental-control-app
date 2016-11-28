@@ -9,18 +9,20 @@ import java.io.Serializable;
  */
 public class UserLoginIdResponseDto implements Serializable {
 
-    @JsonProperty("logged")
-    private boolean logged;
+    private static final long serialVersionUID = 7793589798623509974L;
+
+    @JsonProperty("registered")
+    private boolean registered;
 
     @JsonProperty("user_id")
     private Integer userId;
 
-    public boolean getLogged() {
-        return logged;
+    public boolean isRegistered() {
+        return registered;
     }
 
-    public void setLogged(boolean logged) {
-        this.logged = logged;
+    public void setRegistered(boolean registered) {
+        this.registered = registered;
     }
 
     public Integer getUserId() {

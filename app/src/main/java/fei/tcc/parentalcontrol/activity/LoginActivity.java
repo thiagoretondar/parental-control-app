@@ -1,6 +1,5 @@
 package fei.tcc.parentalcontrol.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -16,6 +15,7 @@ import fei.tcc.parentalcontrol.config.RetrofitConfig;
 import fei.tcc.parentalcontrol.dao.UserDao;
 import fei.tcc.parentalcontrol.rest.APIPlug;
 import fei.tcc.parentalcontrol.rest.dto.ParentLoginDto;
+import fei.tcc.parentalcontrol.rest.dto.ParentLoginIdResponseDto;
 import fei.tcc.parentalcontrol.rest.dto.UserLoginIdResponseDto;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,8 +32,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button loginButton;
 
     private UserDao userDao;
-
-    private String deviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +52,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
 
-        if (userDao.existsUser()) {
-            redirectToActivity(ListAppsActivity.class);
+        if (userDao.existsParent()) {
+            redirectToActivity(DeviceRegisterActivity.class);
         }
-
-        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         linkRedirectRegister.setOnClickListener(this);
         loginButton.setOnClickListener(this);
@@ -78,26 +74,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 parentLoginDto.setEmail(email.getText().toString());
                 parentLoginDto.setPassword(password.getText().toString());
 
-                Call<UserLoginIdResponseDto> userLoginIdResponseDtoCall = apiPlug.loginUserParent(parentLoginDto);
-                userLoginIdResponseDtoCall.enqueue(new Callback<UserLoginIdResponseDto>() {
+                Call<ParentLoginIdResponseDto> userLoginIdResponseDtoCall = apiPlug.loginUserParent(parentLoginDto);
+                userLoginIdResponseDtoCall.enqueue(new Callback<ParentLoginIdResponseDto>() {
                     @Override
-                    public void onResponse(Call<UserLoginIdResponseDto> call, Response<UserLoginIdResponseDto> response) {
-                        UserLoginIdResponseDto newUser = response.body();
+                    public void onResponse(Call<ParentLoginIdResponseDto> call, Response<ParentLoginIdResponseDto> response) {
+                        ParentLoginIdResponseDto newUser = response.body();
 
-                        if (!newUser.getLogged() || newUser.getUserId() == -1) {
-                            Toast.makeText(LoginActivity.this, "Usuário já cadastrado", Toast.LENGTH_SHORT).show();
+                        if (!newUser.getLogged() || newUser.getParentId() == -1) {
+                            Toast.makeText(LoginActivity.this, "Usuário ou senha incorretos", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        Integer userId = newUser.getUserId();
+                        Integer parentId = newUser.getParentId();
 
-                        userDao.insert(userId, deviceId);
+                        userDao.insertParent(parentId);
 
-                        redirectToActivity(AppPermissionActivity.class);
+                        redirectToActivity(DeviceRegisterActivity.class);
                     }
 
                     @Override
-                    public void onFailure(Call<UserLoginIdResponseDto> call, Throwable t) {
+                    public void onFailure(Call<ParentLoginIdResponseDto> call, Throwable t) {
                         Toast.makeText(LoginActivity.this, "Falha ao logar usuário!", Toast.LENGTH_SHORT).show();
                     }
                 });

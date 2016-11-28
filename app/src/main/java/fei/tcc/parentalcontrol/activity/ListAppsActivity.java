@@ -1,5 +1,6 @@
 package fei.tcc.parentalcontrol.activity;
 
+import android.app.ActivityManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
@@ -26,10 +27,11 @@ import java.util.List;
 
 import fei.tcc.parentalcontrol.R;
 import fei.tcc.parentalcontrol.adapter.SelectableAdapter;
+import fei.tcc.parentalcontrol.service.AppUsageInfoService;
+import fei.tcc.parentalcontrol.service.LocationInfoService;
+import fei.tcc.parentalcontrol.service.SendInfoService;
 import fei.tcc.parentalcontrol.utils.BlackListPackageName;
 import fei.tcc.parentalcontrol.vo.AppVo;
-
-import static android.widget.AbsListView.CHOICE_MODE_MULTIPLE_MODAL;
 
 public class ListAppsActivity extends AppCompatActivity {
 
@@ -53,7 +55,10 @@ public class ListAppsActivity extends AppCompatActivity {
         mOpenUsageSettingButton = (Button) findViewById(R.id.button_open_usage_setting);
 
         appListView = (ListView) findViewById(R.id.list_apps);
+    }
 
+    @Override
+    protected void onResume() {
         // Obtain the installed apps in system
         List<AppVo> apps = getInstalledApps();
 
@@ -61,6 +66,24 @@ public class ListAppsActivity extends AppCompatActivity {
 
         appListView.setAdapter(sAdapter);
 
+        // Start services
+        Intent intentLocation = new Intent(this, LocationInfoService.class);
+        Intent intentAppsUsage = new Intent(this, AppUsageInfoService.class);
+        Intent sendInfoService = new Intent(this, SendInfoService.class);
+
+        if (!isMyServiceRunning(LocationInfoService.class)) {
+            startService(intentLocation);
+        }
+
+        if (!isMyServiceRunning(AppUsageInfoService.class)) {
+            startService(intentAppsUsage);
+        }
+
+        if (!isMyServiceRunning(SendInfoService.class)) {
+            startService(sendInfoService);
+        }
+
+        super.onResume();
     }
 
     @Override
@@ -102,25 +125,27 @@ public class ListAppsActivity extends AppCompatActivity {
 
         List<AppVo> apps = new ArrayList<>();
         for (UsageStats usageStat : usageStatistics) {
-            String packageName = usageStat.getPackageName();
-            if (!BlackListPackageName.has(packageName)) {
-                AppVo app = new AppVo();
+            if ((usageStat.getTotalTimeInForeground() / (1000 * 60)) / 60 >= 1) { // greater than one hour
+                String packageName = usageStat.getPackageName();
+                if (!BlackListPackageName.has(packageName)) {
+                    AppVo app = new AppVo();
 
-                try {
-                    // TODO what is zero?
-                    ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
-                    Drawable applicationIcon = pm.getApplicationIcon(applicationInfo);
-                    String applicationName = pm.getApplicationLabel(applicationInfo).toString();
+                    try {
+                        // TODO what is zero?
+                        ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
+                        Drawable applicationIcon = pm.getApplicationIcon(applicationInfo);
+                        String applicationName = pm.getApplicationLabel(applicationInfo).toString();
 
-                    app.setName(applicationName);
-                    app.setIcon(applicationIcon);
-                    app.setUsageStats(usageStat);
-                } catch (PackageManager.NameNotFoundException e) {
-                    Log.w(TAG, "ApplicationInfo not found with package " + packageName);
-                    e.printStackTrace();
+                        app.setName(applicationName);
+                        app.setIcon(applicationIcon);
+                        app.setUsageStats(usageStat);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        Log.w(TAG, "ApplicationInfo not found with package " + packageName);
+                        e.printStackTrace();
+                    }
+
+                    apps.add(app);
                 }
-
-                apps.add(app);
             }
         }
 
@@ -130,7 +155,7 @@ public class ListAppsActivity extends AppCompatActivity {
     public List<UsageStats> getUsageStatistics(int intervalType) {
         // Get the app statistics since one year ago from the current time.
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -1);
+        cal.add(Calendar.DATE, -365);
 
         List<UsageStats> queryUsageStats = mUsageStatsManager
                 .queryUsageStats(intervalType, cal.getTimeInMillis(),
@@ -151,5 +176,15 @@ public class ListAppsActivity extends AppCompatActivity {
         }
 
         return queryUsageStats;
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
