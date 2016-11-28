@@ -1,20 +1,14 @@
 package fei.tcc.parentalcontrol.service;
 
 import android.app.IntentService;
-import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -28,13 +22,9 @@ import fei.tcc.parentalcontrol.rest.dto.AllAppsInfoDto;
 import fei.tcc.parentalcontrol.rest.dto.AppUsageInfoDto;
 import fei.tcc.parentalcontrol.rest.dto.LastDatetimeUsedDto;
 import fei.tcc.parentalcontrol.rest.dto.LocationInfoDto;
-import fei.tcc.parentalcontrol.rest.dto.MostUsedAppsDto;
-import fei.tcc.parentalcontrol.utils.BlackListPackageName;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static java.util.Collections.sort;
 
 public class SendInfoService extends IntentService {
 
@@ -46,9 +36,7 @@ public class SendInfoService extends IntentService {
 
     private LocationDao locationDao;
 
-    private static final Integer SEND_INFO_TIME = 300000 / 3;
-
-    private static final Integer TOTAL_MOST_USED_APPS = 3;
+    private static final Integer SEND_INFO_TIME = 300000;
 
     private UserDao userDao;
 
@@ -111,10 +99,6 @@ public class SendInfoService extends IntentService {
                 }
                 allAppsInfoDto.setLocationInfoList(appLocationList);
 
-                // Obtain the installed apps in system
-                List<MostUsedAppsDto> mostUsedAppsList = getInstalledApps();
-                allAppsInfoDto.setMostUsedAppsList(mostUsedAppsList);
-
                 // Set USER ID in DTO
                 allAppsInfoDto.setUserId(userDao.selectIdFromUser());
 
@@ -157,104 +141,5 @@ public class SendInfoService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-    }
-
-
-    /**
-     * Use PackageManager to get the list of installed apps
-     *
-     * @return list of apps installed
-     */
-    @NonNull
-    private List<MostUsedAppsDto> getInstalledApps() {
-
-        // PackageManager to get info about apps
-        PackageManager pm = this.getPackageManager();
-
-        // Get the info about usage of the apps
-        List<UsageStats> usageStatistics = getUsageStatistics(UsageStatsManager.INTERVAL_YEARLY);
-
-        List<MostUsedAppsDto> apps = new ArrayList<>();
-        for (UsageStats usageStat : usageStatistics) {
-            if ((usageStat.getTotalTimeInForeground() / (1000 * 60)) / 60 >= 1) { // greater than one hour
-                if (!BlackListPackageName.has(usageStat.getPackageName())) {
-
-                    String packageName = usageStat.getPackageName();
-
-                    try {
-                        // TODO what is zero?
-                        ApplicationInfo applicationInfo = pm.getApplicationInfo(packageName, 0);
-                        String applicationName = pm.getApplicationLabel(applicationInfo).toString();
-
-                        int totalMinutes = (int) (usageStat.getTotalTimeInForeground() / (1000 * 60));
-
-                        int hours = totalMinutes / 60;
-                        int minutes = totalMinutes % 60;
-
-
-                        // only add if hours and minutes are different than zero
-                        if (hours != 0 || minutes != 0) {
-                            MostUsedAppsDto mostUsedAppsDto = new MostUsedAppsDto();
-                            mostUsedAppsDto.setName(applicationName);
-                            mostUsedAppsDto.setHours(hours);
-                            mostUsedAppsDto.setMinutes(minutes);
-
-                            apps.add(mostUsedAppsDto);
-                        }
-                    } catch (PackageManager.NameNotFoundException e) {
-                        Log.w(TAG, "ApplicationInfo not found with package " + packageName);
-                    }
-                }
-            }
-        }
-
-        // sort apps by most used
-        sort(apps, new Comparator<MostUsedAppsDto>() {
-            @Override
-            public int compare(MostUsedAppsDto app1, MostUsedAppsDto app2) {
-                long app1Minutes = app1.getHours() * 60 + app1.getMinutes();
-                long app2Minutes = app2.getHours() * 60 + app2.getMinutes();
-
-                if (app1Minutes == app2Minutes) {
-                    return 0;
-                } else if (app2Minutes > app1Minutes) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            }
-        });
-
-        if (apps.size() > TOTAL_MOST_USED_APPS) {
-            return new ArrayList<>(apps.subList(0, 3));
-        } else {
-            return apps;
-        }
-    }
-
-    public List<UsageStats> getUsageStatistics(int intervalType) {
-        // Get the app statistics since one year ago from the current time.
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -365);
-
-        List<UsageStats> queryUsageStats = mUsageStatsManager
-                .queryUsageStats(intervalType, cal.getTimeInMillis(),
-                        System.currentTimeMillis());
-
-//        if (queryUsageStats.size() == 0) {
-//            Log.i(TAG, "The user may not allow the acscess to apps usage. ");
-//            Toast.makeText(this,
-//                    getString(R.string.explanation_access_to_appusage_is_not_enabled),
-//                    Toast.LENGTH_LONG).show();
-//            mOpenUsageSettingButton.setVisibility(View.VISIBLE);
-//            mOpenUsageSettingButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
-//                }
-//            });
-//        }
-
-        return queryUsageStats;
     }
 }
